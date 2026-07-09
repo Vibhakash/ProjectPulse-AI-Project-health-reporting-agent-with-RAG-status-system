@@ -1,0 +1,61 @@
+# Python virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python cache and compilation files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+pytest_temp/
+.eggs/
+build/
+dist/
+*.egg-info/
+
+# Frontend dependencies and builds
+frontend/node_modules/
+frontend/dist/
+frontend/.output/
+frontend/.wrangler/
+frontend/.nitro/
+frontend/.svelte-kit/
+frontend/build/
+
+# Local databases and storage (Security & Data Integrity)
+storage/*.sqlite
+storage/*.sqlite-journal
+storage/*.db
+*.db
+*.sqlite
+
+# Environment variables & API Keys (Critical Security Protection)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+frontend/.env
+frontend/.env.local
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Text Editor settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Generated reports & slide decks (Outputs)
+outputs/weekly/*
+!outputs/weekly/.gitkeep
+outputs/monthly/*
+!outputs/monthly/.gitkeep

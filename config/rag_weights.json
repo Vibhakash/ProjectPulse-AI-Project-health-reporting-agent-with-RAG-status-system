@@ -1,0 +1,52 @@
+{
+  "thresholds": {
+    "green_max": 34,
+    "amber_max": 69
+  },
+  "weights": {
+    "schedule": 30,
+    "progress": 20,
+    "milestone": 20,
+    "blockers": 15,
+    "sentiment": 10,
+    "budget": 5
+  },
+  "blocker_keywords": [
+    "blocked",
+    "blocker",
+    "pending",
+    "delay",
+    "delayed",
+    "impacted",
+    "risk",
+    "issue",
+    "remain",
+    "waiting",
+    "dependency",
+    "mapping",
+    "approval",
+    "escalation",
+    "need"
+  ],
+  "negative_sentiment_keywords": [
+    "pending",
+    "delay",
+    "impacted",
+    "remain",
+    "issue",
+    "risk",
+    "blocked",
+    "need",
+    "waiting",
+    "repeat",
+    "missing"
+  ],
+  "positive_sentiment_keywords": [
+    "completed",
+    "covered",
+    "done",
+    "resolved",
+    "approved",
+    "on track"
+  ]
+}

@@ -1,0 +1,73 @@
+What's actually in the files
+
+Both are hierarchical WBS exports (Project → Phase → Milestone → Task) using Level/Ancestors to nest tasks, with % Complete, Start/End Date, Baseline Start/Finish, Variance, Total Float, Critical?, Status Comment, and an existing RAG/Schedule Health column already populated per row.
+There's a separate Comments sheet with free-text, timestamped PM notes (this is your best raw signal for "blockers" and "stakeholder sentiment" — e.g. "JDE field mapping remain to complete for PO outbound...").
+A Summary sheet gives project-level rollups (task counts by status, % Complete, At Risk?, Project Stage).
+The two files have different schemas — Plan B has extra columns (No. of days Until Today, Baseline Start2/Finish2) and an empty Comments sheet, S2P has 25 comment entries. Your ingestion layer needs to normalize this, not assume identical columns.
+Several cells are literally the string "#UNPARSEABLE" — real messy-data handling, not hypothetical.
+Important design call: the sheet already has a RAG column — that's almost certainly the PM's manual/Smartsheet-computed rating. Your agent should derive RAG independently from signals (that's the actual ask) and can optionally show it alongside the existing column as a sanity check, not copy it.
+
+
+Must-Have Features (map directly to what Zycus is grading)
+1. Data ingestion & normalization
+
+Parse .xlsx files (pandas/openpyxl), handle both schemas via a column-mapping config, not hardcoded indices
+Reconstruct task hierarchy from Level/Ancestors
+Load into SQLite: projects, tasks, comments, snapshots (one snapshot row per weekly run, for trend tracking later)
+Clean #UNPARSEABLE, blank dates, negative/odd variances — flag rather than silently drop
+
+2. RAG determination engine (this is Phase 1 + core of Phase 2)
+
+Deterministic signal extraction per project:
+
+Schedule slippage → Baseline vs Actual/Variance, days until end date vs % remaining
+Budget burn → only if a budget column exists (neither file has one — note this as an assumption, don't fabricate)
+Milestone health → completion rate of Phase/Milestone-level rows vs elapsed time
+Blockers → Critical? = True + negative Total Float, On Hold? flags, keyword scan of Status Comment
+Stakeholder sentiment → LLM sentiment pass over the Comments sheet text
+
+
+A transparent rule engine that turns these into a score (not a black-box LLM guess) — this is what "clearly explain how signals map to RAG" wants
+LLM call on top of the computed signals to generate the plain-English reasoning, citing the specific tasks/comments that drove the status (not a generic paragraph)
+
+3. Graceful degradation on messy/incomplete data
+
+Missing baseline → fall back to Start/End Date only, and say so in the output
+Empty Comments sheet → explicitly state "no stakeholder sentiment data available" instead of inventing one
+Log a per-project data completeness score so the report is honest about its own confidence
+
+4. Weekly output generation
+
+One structured report per project: RAG + score breakdown + reasoning + top risks + recommended actions
+Save as JSON (machine-readable) and Markdown/PDF (human-readable)
+Persist each run to SQLite so you have a real time series, not just single snapshots
+
+5. Monthly synthesis → executive deck (Phase 3)
+
+Pull all stored weekly snapshots across projects
+Trend detection: RAG movement over time, recurring blocker themes (cluster comment text), portfolio-level RAG distribution
+Auto-generate 5–7 slides via python-pptx: Title → Portfolio Health Overview → Trends/Emerging Risks → Notable Project Highlights (outliers only, not a summary of every project) → Recommendations → Appendix
+
+6. Deliverable docs
+
+One-page RAG methodology (Phase 1 write-up)
+README covering architecture, setup, how to run, assumptions, limitations
+Sample weekly outputs for both provided project plans
+
+
+Optional Features (to look senior/professional, not just "complete")
+
+Bonus scheduling: APScheduler or a simple cron entry to run the agent weekly — explicitly asked for as bonus
+Explainability audit trail: SQLite table logging exactly which signals fired and their weights per RAG decision, per run — huge credibility booster for an "AI agent" role
+Config-driven thresholds (YAML/JSON) so RAG cutoffs are tunable without touching code
+Lightweight dashboard (Streamlit) to browse historical RAG trends and drill into task-level detail — fast to build, high visual payoff
+RAG-flip alerts: flag any project that moved Green→Amber/Red since last run
+Data-quality score surfaced per project in the report (% of expected fields populated)
+Simple NL query layer over the SQLite DB ("which projects are blocked on external vendor data?") — nice touch for an AI Engineer role, easy with a text-to-SQL prompt
+Dockerfile for one-command reviewer setup
+pytest suite for the deterministic rule engine (LLM parts are harder to unit test, but the scoring logic shouldn't be)
+Trend charts (matplotlib/plotly) embedded directly into the exec slides
+
+
+Tech Stack
+LayerChoiceWhyLanguagePython 3.11+Standard for this kind of agent/data workIngestionpandas + openpyxlHandles messy Excel, multi-sheet workbooksDatabaseSQLite (via SQLAlchemy or raw sqlite3)As you specified — perfect for a portable, file-based submissionOrchestrationDirect Claude/OpenAI API calls with structured JSON output (function calling / JSON schema)Simpler and more explainable in a review than LangGraph for this scope — easier to defend design decisions in your README/Loom. LangChain is a valid alternative if you want to show framework fluency, but isn't required hereLLMClaude (Sonnet) or GPT-4o-miniReasoning generation, sentiment extraction, comment clusteringScheduling (bonus)APScheduler or OS cronWeekly automated runsPresentationpython-pptxAuto-generate the 5–7 slide deckChartsmatplotlib or plotlyTrend visuals for slides/dashboardDashboard (optional)StreamlitFastest way to get a polished UI with minimal codeTestingpytestCover the deterministic scoring logicPackagingrequirements.txt + optional DockerfileReviewer can run it in one command
