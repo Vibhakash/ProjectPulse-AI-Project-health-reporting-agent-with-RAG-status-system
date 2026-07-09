@@ -61,17 +61,37 @@ Open **[http://localhost:3000](http://localhost:3000)** in your browser to view 
 
 ---
 
-## 🧠 Design Decisions & Architecture
+## Design Decisions & Architecture
 
-### 1. Hybrid RAG Model (Deterministic + LLM)
-*   **Problem**: LLMs are prone to hallucinations and lack auditing guarantees, which is unacceptable for executive RAG reporting.
-*   **Solution**: RAG statuses (Red, Amber, Green) are derived by a **deterministic weighted rule engine** (`src/project_health/rag_engine.py`) using structured signal calculations (Schedule Health 30%, Progress Gap 20%, Milestones 20%, Blockers 15%, Sentiment 10%, Budget 5%). 
-*   **LLM Role**: The LLM agent (`llama-3.3-70b-versatile` via Groq) acts as a reasoning layer *on top* of the computed signals, producing executive summaries, stakeholder sentiment overviews, and risk themes, while citing precise row numbers for auditability.
+### 1. Deterministic RAG First, LLM Second
+The project separates factual scoring from narrative generation. The final Red, Amber, or Green status is calculated by a deterministic weighted rule engine in `src/project_health/rag_engine.py`, rather than asking an LLM to infer project health directly from spreadsheets.
 
-### 2. Slide Synthesis Consolidation
-*   **Problem**: In real portfolios, generating separate detail slides for each project results in a bloated, un-presentable presentation.
-*   **Solution**: Overhauled `monthly_synthesis.py` to consolidate all project insights at the portfolio level into exactly **6 slides** (Executive Summary, Directory, Narrative & Sentiment, Systemic Risks, Leadership Actions, and How Project Works) with medium font sizes, perfect grid alignments, and card containers.
+This was intentional because executive status reporting needs traceability. The scoring model uses inspectable signals such as schedule health, progress gap, milestone health, blockers, stakeholder sentiment, and budget availability. The LLM layer is used only after these signals are computed, turning the evidence into executive summaries, risk themes, and next-step recommendations.
 
-### 3. Active Stage Fallback & Parser Resilience
-*   **Active Stage Fallback**: If the `Project Stage` field is omitted from a workbook summary, the normalizer automatically scans task hierarchies to identify the active, incomplete project phase.
-*   **Resilient File Parsing & Locking**: Resolved a Windows Excel locking issue (`WinError 32`) by reading workbooks fully in memory (disabling `read_only`) and enforcing explicit handle disposal via `try/finally` blocks with `wb.close()`.
+### 2. Evidence-Based Reporting
+The system preserves source row numbers, parsed task details, comments, warnings, and signal-level reasoning. This makes each RAG decision auditable instead of being a black-box summary.
+
+SQLite is used as the persistence layer because it is lightweight, portable, and easy for reviewers to inspect. It stores project snapshots, tasks, comments, RAG signals, and data quality issues so that weekly reports and monthly synthesis can be regenerated from the same evidence base.
+
+### 3. Resilient Excel Ingestion
+The Excel parser is designed for messy project-plan exports. It detects useful sheets and columns from workbook content, normalizes inconsistent field names, handles missing or malformed values, reconstructs WBS hierarchy from level/ancestor fields, and reduces confidence when important evidence is unavailable.
+
+This avoids overfitting the agent to one perfect template and makes it more realistic for operational project reporting, where exported workbooks often contain blanks, optional columns, locked files, or inconsistent headers.
+
+### 4. Portfolio-Level Monthly Synthesis
+The monthly PowerPoint is intentionally limited to a concise executive deck instead of creating one slide per project. `src/project_health/monthly_synthesis.py` consolidates project health into a portfolio summary, project directory, narrative and sentiment themes, systemic risks, leadership actions, and methodology explanation.
+
+This design keeps the output useful for leadership review: the deck highlights cross-project patterns and decisions needed, while detailed weekly Markdown/JSON reports remain available for project-level drilldown.
+
+### 5. Frontend and Backend Separation
+The backend owns ingestion, scoring, persistence, report generation, and synthesis. The React frontend focuses on uploading project plans, browsing portfolio health, viewing methodology, asking project-health questions, and navigating generated insights.
+
+This split keeps the analytical logic reusable from CLI, API, scheduler, or dashboard workflows.
+
+---
+
+## Demo Video Availability
+
+The demo video `Zycus-ProjectPulse AI-by Vibha Kashyap.mp4` is available in the local project folder.
+
+It is intentionally not committed to GitHub because the file is about 172 MB, which exceeds GitHub's regular 100 MB per-file limit. The repository contains the complete source code, documentation, sample inputs, generated docs, and runnable application files; the video should be shared separately or uploaded through Git LFS or external storage if required.
