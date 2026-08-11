@@ -15,6 +15,7 @@ from .rag_engine import evaluate_rag
 from .reasoning import enrich_reasoning
 from .report_writer import write_weekly_reports
 from .repositories import save_analysis, simple_query
+from .alert_service import send_rag_flip_alert
 
 
 def main() -> None:
@@ -63,17 +64,36 @@ def run_analyze(input_dir: str, output_dir: str, db_path: str, config_path: str 
         _copy_samples(input_path)
     files = sorted(input_path.glob("*.xlsx"))
     if not files:
-        raise SystemExit(f"No .xlsx files found in {input_path}")
+        raise ValueError(f"No .xlsx files found in {input_path}")
 
     conn = connect(db_path)
     snapshot_ids = []
+    seen_project_names: dict[str, int] = {}  # Track duplicates within same batch
     for file in files:
-        workbook = load_project_workbook(file, run_date)
+        try:
+            workbook = load_project_workbook(file, run_date)
+        except Exception as exc:
+            print(f"SKIP {file.name}: {exc}")
+            continue
+        # We intentionally keep the same project_name across multiple files
+        # so that they map to the exact same `project_id` for Trend chart rendering.
         result = enrich_reasoning(workbook, evaluate_rag(workbook, run_date, config_path))
         output_paths = write_weekly_reports(workbook, result, output_dir, run_date)
         snapshot_id = save_analysis(conn, workbook, result, output_paths, run_date)
         snapshot_ids.append(snapshot_id)
         print(f"{workbook.detected_project_name}: {result.status} ({result.score}/100) -> {output_paths['markdown']}")
+        # Send email alert if RAG status flipped
+        if result.rag_flip_alert:
+            parts = result.rag_flip_alert.split("->")
+            if len(parts) == 2:
+                old_s = parts[0].strip().split()[-1]
+                new_s = parts[1].strip().split()[0]
+                send_rag_flip_alert(
+                    project_name=workbook.detected_project_name,
+                    old_status=old_s,
+                    new_status=new_s,
+                    run_date=run_date.isoformat(),
+                )
     conn.close()
     return snapshot_ids
 

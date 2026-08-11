@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import unicodedata
 import urllib.error
 import urllib.request
 from dataclasses import asdict
@@ -333,7 +334,20 @@ def offline_enrichment(workbook: ProjectWorkbook, result: RagResult) -> RagResul
 
 def _agent_user_prompt(packet: dict[str, Any]) -> str:
     status = packet["deterministic_rag"]["status"]
+    # Detect if any comments appear to be non-English
+    comments = packet.get("comments", [])
+    has_non_english = any(
+        _is_likely_non_english(c.get("comment_text", ""))
+        for c in comments
+    )
+    translation_note = (
+        "IMPORTANT: Some comments appear to be in a non-English language. "
+        "Before analyzing sentiment, mentally translate those comments to English, "
+        "then report your findings in English only.\n"
+        if has_non_english else ""
+    )
     return (
+        f"{translation_note}"
         f"Analyse this project evidence packet. The RAG status is {status} and must NOT be changed.\n"
         "Return a JSON object with exactly these keys:\n"
         "  executive_summary  — 2-4 sentences citing the top signal evidence and source_row numbers\n"
@@ -471,3 +485,26 @@ def _list(value: Any) -> list[str]:
     if isinstance(value, str) and value.strip():
         return [value.strip()]
     return []
+
+
+def _is_likely_non_english(text: str) -> bool:
+    """
+    Lightweight heuristic to detect non-English text without any external library.
+    Returns True if a significant portion of characters are non-ASCII (e.g. Hindi, Arabic,
+    Chinese, French with accents, etc.). Threshold: >15% non-ASCII printable chars.
+    """
+    if not text or len(text) < 10:
+        return False
+    total = 0
+    non_ascii = 0
+    for ch in text:
+        if ch.isalpha():
+            total += 1
+            try:
+                if ord(ch) > 127:
+                    non_ascii += 1
+            except Exception:
+                pass
+    if total == 0:
+        return False
+    return (non_ascii / total) > 0.15

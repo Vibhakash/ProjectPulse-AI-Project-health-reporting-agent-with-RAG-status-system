@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS projects (
     source_file TEXT NOT NULL,
     project_manager TEXT,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(name, source_file)
+    UNIQUE(name)
 );
 
 CREATE TABLE IF NOT EXISTS project_snapshots (

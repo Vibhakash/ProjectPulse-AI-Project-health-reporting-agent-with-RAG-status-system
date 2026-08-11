@@ -1,97 +1,318 @@
-# Project Health Reporting Agent with RAG Status System
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:667eea,100:764ba2&height=230&section=header&text=ProjectPulse%20AI&fontSize=52&fontColor=ffffff&animation=fadeIn&fontAlignY=32&desc=Health%20Reporting%20Agent%20%26%20RAG%20Status%20System&descAlignY=52&descSize=18" width="100%"/>
+</p>
 
-An intelligent project health reporting and RAG synthesis agent. It parses multi-sheet Excel project schedules, computes deterministic RAG status scores, layers LLM-derived stakeholder sentiment analysis and narrative summaries, and presents findings in a modern React dashboard and widescreen executive PowerPoint deck.
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=20&pause=1200&color=764BA2&center=true&vCenter=true&width=750&lines=Deterministic+RAG+Scoring+%2B+LLM+Narrative+Insights;Multi-Sheet+Excel+Ingestion+%E2%86%92+Auditable+Health+Reports;Interactive+Gantt+Charts+%7C+Historical+Trend+Tracking;One-Click+Premium+PDF+Executive+Reports" alt="Typing SVG"/>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=nodedotjs&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Backend-Render-46E3B7?style=flat-square&logo=render&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Frontend-Vercel-000000?style=flat-square&logo=vercel&logoColor=white"/>
+  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square"/>
+  <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square"/>
+</p>
+
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=python,fastapi,react,nodejs,sqlite,javascript,html,css,vercel,render,git,github"/>
+</p>
+
+<p align="center"><i>An intelligent project-health reporting &amp; RAG synthesis agent — it parses messy multi-sheet Excel schedules, computes a deterministic RAG score, layers LLM-derived stakeholder sentiment and narrative summaries on top, and presents it all in a modern React dashboard with historical trends and premium PDF exports.</i></p>
 
 ---
 
+## 📑 Table of Contents
+
+- [📖 Overview](#overview)
+  - [🎯 The Problem](#the-problem)
+  - [💡 The Solution](#the-solution)
+- [🌟 Core Features](#features)
+- [🏗️ System Architecture](#architecture)
+- [🔄 Workflow / Data Pipeline](#workflow)
+- [🛠️ Tech Stack](#tech-stack)
+- [🎬 Demo](#demo)
+- [📦 Deliverables Map](#deliverables)
+- [⚙️ Getting Started](#getting-started)
+- [▶️ Running the Application](#running)
+- [🚀 Deployment](#deployment)
+- [🧩 Design Decisions & Architecture Rationale](#design-decisions)
+- [📄 License](#license)
+- [👩‍💻 Author](#author)
+
+---
+
+<a name="overview"></a>
+## 📖 Overview
+
+<a name="the-problem"></a>
+### 🎯 The Problem
+
+Traditional project status reporting is manual, subjective, and disconnected. Health calls depend on whoever compiled the spreadsheet that week, stakeholder sentiment buried in free-text comment cells goes unread, and by the time an executive summary lands on someone's desk there's no way to trace **why** a project was marked Red, Amber, or Green.
+
+<a name="the-solution"></a>
+### 💡 The Solution
+
+ProjectPulse AI splits **scoring** and **storytelling** into two separate jobs:
+
+1. A **deterministic rule engine** reads the evidence — schedule health, progress gaps, milestone status, blockers, sentiment, budget — and computes an auditable RAG score first.
+2. An **LLM layer** then turns that computed evidence into an executive-ready narrative: key drivers, top risks, and recommendations.
+
+Every score traces back to a source row, a task comment, or a signal — nothing is a black box.
+
+---
+
+<a name="features"></a>
+## 🌟 Core Features
+
+| Feature | What it does |
+|---|---|
+| 🎯 **Dynamic RAG Scoring Engine** | Deterministic rule engine computing schedule health, unmitigated risks, and milestone slips into an auditable RAG score |
+| 🤖 **AI Agent Insights** | LLM-powered narrative generation — Key Drivers, Top Risks, and Recommendations — grounded in the rule engine's signals |
+| 📈 **Historical Trend Tracking** | Groups snapshots over time and visualizes RAG trajectory via an interactive Recharts line graph |
+| 📊 **Interactive Gantt Charts** | Visual timeline of every task, highlighting baseline drift and schedule slippage |
+| 🌐 **Multi-Language Sentiment Analysis** | Detects, translates, and incorporates non-English stakeholder comments (e.g., French) into sentiment summaries |
+| 📄 **Premium PDF Exports** | One-click, polished, offline executive reports built with ReportLab, matching the dashboard's aesthetic |
+| 🗂️ **Robust Bulk Ingestion** | Drop in `.zip` archives spanning multiple weeks — processed entirely in-memory, bypassing file-lock issues |
+
+---
+
+<a name="architecture"></a>
+## 🏗️ System Architecture
+
+```mermaid
+flowchart TB
+    subgraph Client["🖥️ Frontend — React (deployed on Vercel)"]
+        UI["Dashboard UI"]
+        Gantt["Gantt Chart View"]
+        Trends["Trend Charts (Recharts)"]
+        Methodology["Methodology Tab"]
+    end
+
+    subgraph Server["⚙️ Backend — FastAPI (deployed on Render)"]
+        API["REST API Layer"]
+        Ingest["Excel / ZIP Ingestion Engine"]
+        RAG["Deterministic RAG Rule Engine"]
+        LLM["LLM Insight Layer"]
+        PDF["PDF Report Generator (ReportLab)"]
+    end
+
+    subgraph Data["🗄️ Persistence"]
+        DB[("SQLite")]
+    end
+
+    UI -->|"HTTPS"| API
+    Gantt --> API
+    Trends --> API
+    Methodology --> API
+
+    API --> Ingest
+    Ingest --> RAG
+    RAG --> LLM
+    RAG --> DB
+    LLM --> DB
+    API --> PDF
+    PDF --> DB
+    DB --> API
+```
+
+---
+
+<a name="workflow"></a>
+## 🔄 Workflow / Data Pipeline
+
+```mermaid
+flowchart LR
+    A["📁 Upload .xlsx / .zip"] --> B["🔍 Parse & Normalize Sheets"]
+    B --> C["🏗️ Reconstruct WBS Hierarchy"]
+    C --> D["💬 Extract Inline Comments"]
+    D --> E{"🌐 Non-English Comment?"}
+    E -->|"Yes"| F["🔤 Detect + Translate"]
+    E -->|"No"| G["📊 Sentiment Analysis"]
+    F --> G
+    G --> H["⚖️ Deterministic RAG Scoring"]
+    H --> I["🤖 LLM Narrative Synthesis"]
+    I --> J[("💾 Persist Snapshot — SQLite")]
+    J --> K["📈 Dashboard: RAG + Gantt + Trends"]
+    J --> L["📄 One-Click PDF Export"]
+```
+
+---
+
+<a name="tech-stack"></a>
+## 🛠️ Tech Stack
+
+<table>
+<tr><td><b>Backend</b></td><td>
+<img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
+<img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white"/>
+</td></tr>
+<tr><td><b>Frontend</b></td><td>
+<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"/>
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"/>
+<img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"/>
+</td></tr>
+<tr><td><b>Data Visualization</b></td><td>
+<img src="https://img.shields.io/badge/Recharts-22B5BF?style=for-the-badge"/>
+</td></tr>
+<tr><td><b>Reporting</b></td><td>
+<img src="https://img.shields.io/badge/ReportLab-CC3333?style=for-the-badge"/>
+</td></tr>
+<tr><td><b>Database</b></td><td>
+<img src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white"/>
+</td></tr>
+<tr><td><b>Deployment</b></td><td>
+<img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white"/>
+<img src="https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white"/>
+</td></tr>
+<tr><td><b>Tooling</b></td><td>
+<img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white"/>
+<img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
+</td></tr>
+</table>
+
+---
+
+<a name="demo"></a>
+## 🎬 Demo
+
+> 🎥 A full walkthrough — **`Zycus-ProjectPulse AI-by Vibha Kashyap.mp4`** — is available in the project folder locally.
+>
+> It isn't committed to this repository because it's **~172 MB**, over GitHub's 100 MB per-file limit. Everything else — source code, docs, sample inputs, generated reports, and the runnable app — lives in this repo. Share the video separately, or host it via **Git LFS**, an unlisted YouTube upload, or cloud storage, then link it here.
+
+<!--
+Add real screenshots once available, then uncomment:
+<p align="center">
+  <img src="docs/screenshots/dashboard.png" alt="Dashboard Screenshot" width="80%"/>
+</p>
+-->
+
+---
+
+<a name="deliverables"></a>
 ## 📦 Deliverables Map
 
-The files required for submission are prepared at the following locations in the workspace:
+| # | Deliverable | Location |
+|---|---|---|
+| 1 | Features & Tech Stack | [`Features and techstack.md`](./Features%20and%20techstack.md) |
+| 2 | One-Page RAG Methodology | [`docs/rag_methodology.md`](./docs/rag_methodology.md) — also browsable in-app under the **Methodology** tab |
+| 3 | Working AI Agent (Code + Instructions) | See [Getting Started](#getting-started) below |
+| 4 | Sample Test Data Generator | Run `python generate_test_data.py` → produces a `Test_Suite.zip` exercising Gantt, Trends, Multi-language, and more |
+| 5 | Final Monthly Presentation (6 slides, 16:9) | [`outputs/monthly/monthly_project_health.pptx`](./outputs/monthly/monthly_project_health.pptx) |
 
-1.  **One-Page RAG Methodology**:
-    *   File Path: [`docs/rag_methodology.md`](file:///c:/Users/Vibha/Desktop/vibha/Projects/Zycus%20Project-Project%20health%20reporting%20agent%20with%20RAG%20status%20system/docs/rag_methodology.md)
-    *   Also browseable directly in the web dashboard under the **"How Project Works"** page.
-2.  **Working AI Agent (Code + Instructions)**:
-    *   Instructions to run both frontend and backend are detailed below.
-3.  **Sample Weekly Outputs**:
-    *   **Green Project**: [`outputs/weekly/zycus-green-implementation_2026-07-08.md`](file:///c:/Users/Vibha/Desktop/vibha/Projects/Zycus%20Project-Project%20health%20reporting%20agent%20with%20RAG%20status%20system/outputs/weekly/zycus-green-implementation_2026-07-08.md) (and [`.json`](file:///c:/Users/Vibha/Desktop/vibha/Projects/Zycus%20Project-Project%20health%20reporting%20agent%20with%20RAG%20status%20system/outputs/weekly/zycus-green-implementation_2026-07-08.json))
-    *   **Amber Project**: [`outputs/weekly/zycus-amber-implementation_2026-07-08.md`](file:///c:/Users/Vibha/Desktop/vibha/Projects/Zycus%20Project-Project%20health%20reporting%20agent%20with%20RAG%20status%20system/outputs/weekly/zycus-amber-implementation_2026-07-08.md) (and [`.json`](file:///c:/Users/Vibha/Desktop/vibha/Projects/Zycus%20Project-Project%20health%20reporting%20agent%20with%20RAG%20status%20system/outputs/weekly/zycus-amber-implementation_2026-07-08.json))
-    *   **Red Project**: [`outputs/weekly/zycus-red-implementation_2026-07-08.md`](file:///c:/Users/Vibha/Desktop/vibha/Projects/Zycus%20Project-Project%20health%20reporting%20agent%20with%20RAG%20status%20system/outputs/weekly/zycus-red-implementation_2026-07-08.md) (and [`.json`](file:///c:/Users/Vibha/Desktop/vibha/Projects/Zycus%20Project-Project%20health%20reporting%20agent%20with%20RAG%20status%20system/outputs/weekly/zycus-red-implementation_2026-07-08.json))
-4.  **Final Monthly Presentation (5–7 Slides)**:
-    *   File Path: [`outputs/monthly/monthly_project_health.pptx`](file:///c:/Users/Vibha/Desktop/vibha/Projects/Zycus%20Project-Project%20health%20reporting%20agent%20with%20RAG%20status%20system/outputs/monthly/monthly_project_health.pptx) (Exactly **6 slides** total, generated in widescreen 16:9 layout).
-5.  **Verification & Supporting Documents (PDF and Word formats)**:
-    *   Methodology: PDF [`docs/rag_methodology.pdf`](file:///c:/Users/Vibha/Desktop/vibha/Projects/Zycus%20Project-Project%20health%20reporting%20agent%20with%20RAG%20status%20system/docs/rag_methodology.pdf) | Word [`docs/rag_methodology.docx`](file:///c:/Users/Vibha/Desktop/vibha/Projects/Zycus%20Project-Project%20health%20reporting%20agent%20with%20RAG%20status%20system/docs/rag_methodology.docx)
-    *   Requirements Fulfilled Guide: PDF [`docs/requirements_and_deliverables.pdf`](file:///c:/Users/Vibha/Desktop/vibha/Projects/Zycus%20Project-Project%20health%20reporting%20agent%20with%20RAG%20status%20system/docs/requirements_and_deliverables.pdf) | Word [`docs/requirements_and_deliverables.docx`](file:///c:/Users/Vibha/Desktop/vibha/Projects/Zycus%20Project-Project%20health%20reporting%20agent%20with%20RAG%20status%20system/docs/requirements_and_deliverables.docx)
+> ℹ️ **Note:** the original file paths pointed to a local `C:\Users\...` machine location, which only resolves on that one computer. The links above use repo-relative paths instead, so they'll work correctly once pushed to GitHub — just make sure each file lives at that path relative to the repo root.
 
 ---
 
-## 🛠️ Setup & Running
-
-Both backend and frontend services are currently active in the background. If you need to restart them, use the following steps:
+<a name="getting-started"></a>
+## ⚙️ Getting Started
 
 ### Prerequisites
-*   Python 3.10+
-*   Node.js 18+
 
-### Setup Environment
-1.  **Backend Setup**:
-    ```bash
-    python -m venv .venv
-    .venv\Scripts\activate
-    pip install -r requirements.txt
-    pip install -e .
-    ```
-2.  **Frontend Setup**:
-    ```bash
-    cd frontend
-    npm install
-    ```
+<img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white"/> <img src="https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=nodedotjs&logoColor=white"/>
 
-### Run Servers
-*   **Terminal 1 — Backend FastAPI Server (runs on Port 8001)**:
-    ```bash
-    .venv\Scripts\scripts\python run_api.py
-    ```
-*   **Terminal 2 — Frontend Dev Server (runs on Port 3000)**:
-    ```bash
-    cd frontend
-    npm run dev
-    ```
-Open **[http://localhost:3000](http://localhost:3000)** in your browser to view the application.
+### 1. Backend Setup
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+pip install -e .
+```
+
+### 2. Frontend Setup
+
+```bash
+cd frontend
+npm install
+```
 
 ---
 
-## Design Decisions & Architecture
+<a name="running"></a>
+## ▶️ Running the Application
 
-### 1. Deterministic RAG First, LLM Second
-The project separates factual scoring from narrative generation. The final Red, Amber, or Green status is calculated by a deterministic weighted rule engine in `src/project_health/rag_engine.py`, rather than asking an LLM to infer project health directly from spreadsheets.
+| Terminal | Command | Runs on |
+|---|---|---|
+| **1 — Backend (FastAPI)** | `.venv\Scripts\python run_api.py` | `http://localhost:8001` |
+| **2 — Frontend (Dev Server)** | `cd frontend && npm run dev` | `http://localhost:3000` |
 
-This was intentional because executive status reporting needs traceability. The scoring model uses inspectable signals such as schedule health, progress gap, milestone health, blockers, stakeholder sentiment, and budget availability. The LLM layer is used only after these signals are computed, turning the evidence into executive summaries, risk themes, and next-step recommendations.
-
-### 2. Evidence-Based Reporting
-The system preserves source row numbers, parsed task details, comments, warnings, and signal-level reasoning. This makes each RAG decision auditable instead of being a black-box summary.
-
-SQLite is used as the persistence layer because it is lightweight, portable, and easy for reviewers to inspect. It stores project snapshots, tasks, comments, RAG signals, and data quality issues so that weekly reports and monthly synthesis can be regenerated from the same evidence base.
-
-### 3. Resilient Excel Ingestion
-The Excel parser is designed for messy project-plan exports. It detects useful sheets and columns from workbook content, normalizes inconsistent field names, handles missing or malformed values, reconstructs WBS hierarchy from level/ancestor fields, and reduces confidence when important evidence is unavailable.
-
-This avoids overfitting the agent to one perfect template and makes it more realistic for operational project reporting, where exported workbooks often contain blanks, optional columns, locked files, or inconsistent headers.
-
-### 4. Portfolio-Level Monthly Synthesis
-The monthly PowerPoint is intentionally limited to a concise executive deck instead of creating one slide per project. `src/project_health/monthly_synthesis.py` consolidates project health into a portfolio summary, project directory, narrative and sentiment themes, systemic risks, leadership actions, and methodology explanation.
-
-This design keeps the output useful for leadership review: the deck highlights cross-project patterns and decisions needed, while detailed weekly Markdown/JSON reports remain available for project-level drilldown.
-
-### 5. Frontend and Backend Separation
-The backend owns ingestion, scoring, persistence, report generation, and synthesis. The React frontend focuses on uploading project plans, browsing portfolio health, viewing methodology, asking project-health questions, and navigating generated insights.
-
-This split keeps the analytical logic reusable from CLI, API, scheduler, or dashboard workflows.
+Then open **[http://localhost:3000](http://localhost:3000)** in your browser. 🎉
 
 ---
 
-## Demo Video Availability
+<a name="deployment"></a>
+## 🚀 Deployment
 
-The demo video `Zycus-ProjectPulse AI-by Vibha Kashyap.mp4` is available in the local project folder.
+| Layer | Platform | Notes |
+|---|---|---|
+| **Backend — FastAPI** | ![Render](https://img.shields.io/badge/Render-46E3B7?style=flat-square&logo=render&logoColor=white) | Add your live Render URL here, e.g. `https://projectpulse-api.onrender.com` |
+| **Frontend — React** | ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white) | Add your live Vercel URL here, e.g. `https://projectpulse-ai.vercel.app` |
 
-It is intentionally not committed to GitHub because the file is about 172 MB, which exceeds GitHub's regular 100 MB per-file limit. The repository contains the complete source code, documentation, sample inputs, generated docs, and runnable application files; the video should be shared separately or uploaded through Git LFS or external storage if required.
+Once both are live, point the frontend's API base URL environment variable at your deployed Render backend so the two services can talk to each other in production.
+
+---
+
+<a name="design-decisions"></a>
+## 🧩 Design Decisions & Architecture Rationale
+
+<details>
+<summary><b>1. Deterministic RAG First, LLM Second</b></summary>
+<br>
+
+The final Red, Amber, or Green status is calculated by a deterministic weighted rule engine in `src/project_health/rag_engine.py`, rather than asking an LLM to infer project health directly from spreadsheets.
+
+This is intentional: executive status reporting needs traceability. The scoring model uses inspectable signals — schedule health, progress gap, milestone health, blockers, stakeholder sentiment, and budget availability. The LLM layer is used only *after* these signals are computed, turning the evidence into executive summaries, risk themes, and next-step recommendations.
+</details>
+
+<details>
+<summary><b>2. Evidence-Based Reporting</b></summary>
+<br>
+
+The system preserves source row numbers, parsed task details, inline task comments, warnings, and signal-level reasoning — making each RAG decision auditable instead of a black-box summary.
+
+SQLite is the persistence layer because it's lightweight, portable, and easy for reviewers to inspect. It stores project snapshots, tasks, comments, RAG signals, and data quality issues, so weekly reports and monthly synthesis can be regenerated from the same evidence base.
+</details>
+
+<details>
+<summary><b>3. Resilient Excel Ingestion & Grouping</b></summary>
+<br>
+
+The Excel parser is built for messy project-plan exports: it detects useful sheets and columns from workbook content, normalizes inconsistent field names, handles missing or malformed values, reconstructs WBS hierarchy from level/ancestor fields, and explicitly extracts inline comments from task rows.
+
+The database schema (`UNIQUE(name)`) intentionally groups uploads by their internal **Project Name** rather than filename, letting the system merge `Week1.xlsx`, `Week2.xlsx`, and `Week3.xlsx` into one unified chronological timeline for trend tracking.
+</details>
+
+<details>
+<summary><b>4. Frontend and Backend Separation</b></summary>
+<br>
+
+The backend owns ingestion, scoring, persistence, report generation, and synthesis via FastAPI. The React frontend focuses on uploading project plans, browsing portfolio health, rendering interactive Gantt and Trend charts, and navigating generated insights.
+
+This split keeps the analytical logic reusable across CLI, API, scheduler, or dashboard workflows.
+</details>
+
+---
+
+<a name="license"></a>
+## 📄 License
+
+This project is licensed under the **MIT License**. Add a `LICENSE` file at the repo root to match (or swap this section for whichever license you actually intend to use).
+
+---
+
+<a name="author"></a>
+## 👩‍💻 Author
+
+**Vibha Kashyap** — B.Tech AIML Student
+<!-- Add your GitHub / LinkedIn / portfolio links here, e.g.:
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)](your-link)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](your-link)
+-->
+
+---
+
+<p align="center"><i>✨ Because project status shouldn't be a guessing game — deterministic where it matters, intelligent where it helps. ✨</i></p>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:667eea,100:764ba2&height=120&section=footer" width="100%"/>

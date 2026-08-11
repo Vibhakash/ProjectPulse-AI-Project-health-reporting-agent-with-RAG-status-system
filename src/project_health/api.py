@@ -20,14 +20,15 @@ import json
 import os
 import shutil
 import tempfile
+import zipfile
 from datetime import date
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 
 load_dotenv()
 
@@ -46,6 +47,18 @@ from .repositories import (
 DB_PATH = os.getenv("PROJECT_HEALTH_DB", "storage/project_health.sqlite")
 OUTPUT_DIR = "outputs"
 ALLOWED_OUTPUT_ROOT = Path(OUTPUT_DIR).resolve()
+API_SECRET_KEY = os.getenv("API_SECRET_KEY", "").strip()
+
+
+# ---------------------------------------------------------------------------
+# API Key Auth dependency (disabled when API_SECRET_KEY is not set in .env)
+# ---------------------------------------------------------------------------
+def verify_api_key(x_api_key: Optional[str] = Header(default=None)) -> None:
+    """Validate X-Api-Key header on mutation endpoints. No-op if API_SECRET_KEY not configured."""
+    if not API_SECRET_KEY:
+        return  # Dev mode — no key required
+    if x_api_key != API_SECRET_KEY:
+        raise HTTPException(status_code=401, detail="Invalid or missing API key. Set X-Api-Key header.")
 
 
 # ---------------------------------------------------------------------------
@@ -96,27 +109,52 @@ def _parse_json_field(value: Any, default=None):
 # ---------------------------------------------------------------------------
 # POST /api/analyze
 # ---------------------------------------------------------------------------
-@app.post("/api/analyze")
+@app.post("/api/analyze", dependencies=[Depends(verify_api_key)])
 async def analyze(
     files: list[UploadFile] = File(...),
     run_date: str | None = Form(default=None),
 ):
     """
-    Accept one or more .xlsx files, run the full RAG + LLM agent pipeline,
+    Accept one or more .xlsx or .zip files, run the full RAG + LLM agent pipeline,
     store results in SQLite, return snapshot summaries.
+    Accepts: .xlsx files directly, or .zip archives containing .xlsx files.
     """
-    # Validate file types
+    # Validate file types — allow .xlsx and .zip
     for f in files:
-        if not (f.filename or "").lower().endswith(".xlsx"):
-            raise HTTPException(400, f"Only .xlsx files accepted. Got: {f.filename}")
+        name = (f.filename or "").lower()
+        if not (name.endswith(".xlsx") or name.endswith(".zip")):
+            raise HTTPException(400, f"Only .xlsx or .zip files accepted. Got: {f.filename}")
 
-    # Write uploads to a temp directory, run analysis, then clean up
+    # Write uploads to a temp directory, expanding ZIPs automatically
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_path = Path(tmp_dir)
         for f in files:
-            dest = tmp_path / (f.filename or "upload.xlsx")
             content = await f.read()
-            dest.write_bytes(content)
+            fname = (f.filename or "upload.xlsx").lower()
+            if fname.endswith(".zip"):
+                # Extract all .xlsx files from the ZIP in-memory (avoids Windows file-lock on NamedTemporaryFile)
+                import io
+                try:
+                    with zipfile.ZipFile(io.BytesIO(content), "r") as zf:
+                        extracted_count = 0
+                        for member in zf.namelist():
+                            # Skip macOS metadata, hidden files, subdirectory-only entries
+                            if (
+                                member.lower().endswith(".xlsx")
+                                and not member.startswith("__")
+                                and not member.startswith(".")
+                                and not member.startswith("__MACOSX")
+                            ):
+                                safe_name = Path(member).name  # strip any sub-path
+                                (tmp_path / safe_name).write_bytes(zf.read(member))
+                                extracted_count += 1
+                        if extracted_count == 0:
+                            raise HTTPException(400, f"ZIP file contained no .xlsx files: {f.filename}")
+                except zipfile.BadZipFile:
+                    raise HTTPException(400, f"Invalid or corrupted ZIP file: {f.filename}")
+            else:
+                dest = tmp_path / (f.filename or "upload.xlsx")
+                dest.write_bytes(content)
 
         try:
             parsed_date = date.fromisoformat(run_date) if run_date else date.today()
@@ -198,6 +236,47 @@ def portfolio_latest():
 
 
 # ---------------------------------------------------------------------------
+# GET /api/projects/{project_id}/trend
+# ---------------------------------------------------------------------------
+@app.get("/api/projects/{project_id}/trend")
+def project_trend(project_id: int):
+    """
+    Return all historical snapshots for a project in chronological order.
+    Used to draw the RAG score trend chart on the frontend.
+    """
+    conn = _db()
+    rows = conn.execute(
+        """
+        SELECT ps.id AS snapshot_id, ps.run_date, ps.rag_status, ps.rag_score,
+               ps.confidence, ps.data_quality_score, ps.source_schedule_health,
+               ps.project_stage, ps.rag_flip_alert
+        FROM project_snapshots ps
+        WHERE ps.project_id = ?
+        ORDER BY ps.run_date ASC, ps.id ASC
+        """,
+        (project_id,),
+    ).fetchall()
+    conn.close()
+    return {"project_id": project_id, "trend": [_row_to_dict(r) for r in rows]}
+
+
+# ---------------------------------------------------------------------------
+# GET /api/template
+# ---------------------------------------------------------------------------
+@app.get("/api/template")
+def download_template():
+    """Serve the official Excel project plan template for download."""
+    template_path = Path("data/ProjectPulseAI_Project_Plan_Template.xlsx")
+    if not template_path.exists():
+        raise HTTPException(404, "Template file not found. Run generate_template.py first.")
+    return FileResponse(
+        path=str(template_path),
+        filename="ProjectPulseAI_Project_Plan_Template.xlsx",
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+
+
+# ---------------------------------------------------------------------------
 # GET /api/snapshots/{snapshot_id}
 # ---------------------------------------------------------------------------
 @app.get("/api/snapshots/{snapshot_id}")
@@ -265,6 +344,7 @@ def snapshot_detail(snapshot_id: int):
     return {
         "snapshot": {
             "snapshot_id": snapshot_id,
+            "project_id": snap.get("project_id"),
             "project_name": snap.get("project_name"),
             "run_date": snap.get("run_date"),
             "rag_status": snap.get("rag_status"),
@@ -289,6 +369,7 @@ def snapshot_detail(snapshot_id: int):
             "all_task_columns": all_task_columns,
         }
     }
+
 
 
 # ---------------------------------------------------------------------------
@@ -346,6 +427,50 @@ def delete_snapshot(snapshot_id: int):
     conn.commit()
     conn.close()
     return {"status": "success", "message": f"Snapshot {snapshot_id} successfully deleted"}
+
+
+# ---------------------------------------------------------------------------
+# GET /api/snapshots/{snapshot_id}/pdf
+# ---------------------------------------------------------------------------
+@app.get("/api/snapshots/{snapshot_id}/pdf")
+def snapshot_pdf(snapshot_id: int):
+    """
+    Generate and stream a styled PDF report for a single project snapshot.
+    Uses reportlab. Returns 501 if reportlab is not installed.
+    """
+    from .pdf_generator import generate_snapshot_pdf
+    conn = _db()
+    pdf_bytes: bytes | None = None
+    proj_name = f"Snapshot_{snapshot_id}"
+    try:
+        # Fetch project name before generating
+        name_row = conn.execute(
+            "SELECT p.name FROM project_snapshots ps JOIN projects p ON p.id = ps.project_id WHERE ps.id = ?",
+            (snapshot_id,),
+        ).fetchone()
+        if not name_row:
+            raise HTTPException(404, f"Snapshot {snapshot_id} not found")
+        proj_name = name_row[0] or proj_name
+        pdf_bytes = generate_snapshot_pdf(conn, snapshot_id)
+    except HTTPException:
+        raise
+    except ValueError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(501, str(exc)) from exc
+    finally:
+        conn.close()
+
+    safe_name = proj_name.replace(" ", "_").replace("/", "-")[:60]
+    filename = f"ProjectHealth_{safe_name}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Access-Control-Expose-Headers": "Content-Disposition",
+        },
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -449,7 +574,7 @@ def download_file(path: str):
 # ---------------------------------------------------------------------------
 # POST /api/ask
 # ---------------------------------------------------------------------------
-@app.post("/api/ask")
+@app.post("/api/ask", dependencies=[Depends(verify_api_key)])
 def ask(body: dict):
     """
     Simple natural-language query routed to the SQLite repository layer.

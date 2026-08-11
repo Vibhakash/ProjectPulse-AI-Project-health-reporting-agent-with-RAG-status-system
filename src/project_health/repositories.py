@@ -126,8 +126,11 @@ def _upsert_project(conn: sqlite3.Connection, name: str, source_file: str, manag
         (name, source_file, manager),
     )
     if manager:
-        conn.execute("UPDATE projects SET project_manager = ? WHERE name = ? AND source_file = ?", (manager, name, source_file))
-    row = conn.execute("SELECT id FROM projects WHERE name = ? AND source_file = ?", (name, source_file)).fetchone()
+        conn.execute("UPDATE projects SET project_manager = ?, source_file = ? WHERE name = ?", (manager, source_file, name))
+    else:
+        conn.execute("UPDATE projects SET source_file = ? WHERE name = ?", (source_file, name))
+    
+    row = conn.execute("SELECT id FROM projects WHERE name = ?", (name,)).fetchone()
     return int(row["id"])
 
 

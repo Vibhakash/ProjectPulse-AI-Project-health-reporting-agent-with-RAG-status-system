@@ -1,9 +1,11 @@
 // Thin API client for the Project Health backend.
-// The backend exposes REST endpoints defined in FRONTEND_BUILDER_SPEC.md.
 // Configure the base URL via VITE_API_BASE_URL (defaults to "/api").
 
 export const API_BASE: string =
   (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") || "/api";
+
+// Optional API key read from VITE_API_KEY env var
+const API_KEY: string = (import.meta.env.VITE_API_KEY as string | undefined) || "";
 
 export class ApiError extends Error {
   constructor(public status: number, message: string, public body?: unknown) {
@@ -31,6 +33,11 @@ async function parseError(res: Response): Promise<ApiError> {
   return new ApiError(res.status, message, body);
 }
 
+/** Auth headers — includes X-Api-Key when configured via VITE_API_KEY */
+function authHeaders(): Record<string, string> {
+  return API_KEY ? { "X-Api-Key": API_KEY } : {};
+}
+
 export async function apiGet<T>(path: string): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw await parseError(res);
@@ -40,7 +47,7 @@ export async function apiGet<T>(path: string): Promise<T> {
 export async function apiPostJSON<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    headers: { "Content-Type": "application/json", Accept: "application/json", ...authHeaders() },
     body: JSON.stringify(body),
   });
   if (!res.ok) throw await parseError(res);
@@ -48,7 +55,11 @@ export async function apiPostJSON<T>(path: string, body: unknown): Promise<T> {
 }
 
 export async function apiUpload<T>(path: string, form: FormData): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, { method: "POST", body: form });
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "POST",
+    headers: { ...authHeaders() },
+    body: form,
+  });
   if (!res.ok) throw await parseError(res);
   return (await res.json()) as T;
 }
@@ -57,9 +68,7 @@ export function fileDownloadUrl(path: string): string {
   return `${API_BASE}/files?path=${encodeURIComponent(path)}`;
 }
 
-// -----------------------------
-// Types (mirror FRONTEND_BUILDER_SPEC.md)
-// -----------------------------
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 export type RagStatus = "Red" | "Amber" | "Green" | string;
 
@@ -127,7 +136,7 @@ export interface SnapshotDetail {
   caveats: string[];
   signals: Signal[];
   all_task_columns: string[];
-  // LLM Agent fields (populated when an API key is configured)
+  project_id?: number;
   executive_summary?: string | null;
   sentiment_summary?: string | null;
   risk_themes?: string[];
@@ -186,9 +195,25 @@ export interface AskResponse {
   rows: Array<Record<string, unknown>>;
 }
 
-// -----------------------------
-// API surface
-// -----------------------------
+/** One data point in a project's historical RAG score trend */
+export interface TrendPoint {
+  snapshot_id: number;
+  run_date: string;
+  rag_status: RagStatus;
+  rag_score: number;
+  confidence: string;
+  data_quality_score: number;
+  source_schedule_health?: string | null;
+  project_stage?: string | null;
+  rag_flip_alert?: string | null;
+}
+
+export interface TrendResponse {
+  project_id: number;
+  trend: TrendPoint[];
+}
+
+// ─── API surface ──────────────────────────────────────────────────────────────
 
 export const api = {
   analyze: (files: File[], runDate?: string) => {
@@ -203,8 +228,13 @@ export const api = {
   comments: (id: number | string) => apiGet<CommentsResponse>(`/snapshots/${id}/comments`),
   monthlySynthesis: () => apiPostJSON<MonthlySynthesisResponse>("/monthly-synthesis", {}),
   ask: (question: string) => apiPostJSON<AskResponse>("/ask", { question }),
+  trend: (projectId: number | string) => apiGet<TrendResponse>(`/projects/${projectId}/trend`),
+  exportPdfUrl: (snapshotId: number | string) => `${API_BASE}/snapshots/${snapshotId}/pdf`,
   deleteSnapshot: (id: number | string) => {
-    return fetch(`${API_BASE}/snapshots/${id}`, { method: "DELETE" }).then(async (res) => {
+    return fetch(`${API_BASE}/snapshots/${id}`, {
+      method: "DELETE",
+      headers: { ...authHeaders() },
+    }).then(async (res) => {
       if (!res.ok) throw await parseError(res);
       return res.json() as Promise<{ status: string; message: string }>;
     });

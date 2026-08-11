@@ -33,6 +33,20 @@ def load_project_workbook(path: str | Path, run_date: date | None = None) -> Pro
     summary = _normalize_summary(sheets.get(summary_sheet_name or "", []), issues, summary_sheet_name)
     comments = _normalize_comments(source.name, comments_sheet_name, sheets.get(comments_sheet_name or "", []), issues)
 
+    # Also extract inline comments directly from the tasks sheet (Status Comment, Comments, etc.)
+    for task in tasks:
+        inline_text = task.comments or task.status_comment
+        if inline_text and str(inline_text).strip():
+            comments.append(CommentRecord(
+                source_file=source.name,
+                sheet_name=task_sheet_name,
+                source_row=task.source_row,
+                referenced_row=task.source_row,
+                comment_text=str(inline_text).strip(),
+                author=task.owner or task.assigned_to or task.project_manager,
+                raw_data={"task_name": task.task_name}
+            ))
+
     if not summary.get("Project Stage"):
         ref_date = run_date or date.today()
         summary["Project Stage"] = _detect_project_stage_fallback(tasks, ref_date)
@@ -57,7 +71,7 @@ def _detect_task_sheet(sheets: dict[str, list[dict[str, Any]]]) -> str | None:
     best_score = -1
     expected = {"Task Name", "Status", "% Complete", "Schedule Health"}
     for name, rows in sheets.items():
-        columns = {key for row in rows[:5] for key in row}
+        columns = {key for row in rows[:20] for key in row}
         score = len(expected & columns)
         if score > best_score:
             best_name, best_score = name, score

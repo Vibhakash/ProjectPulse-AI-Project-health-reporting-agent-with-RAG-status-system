@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { api, type CommentRow, type Signal, type TaskRow } from "@/lib/api";
+import { api, type CommentRow, type Signal, type TaskRow, type TrendPoint } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertTriangle, ArrowLeft, Bot, Brain, Loader2, MessageSquare, TrendingUp, Trash2 } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Bot, Brain, Download, FileDown, Loader2, MessageSquare, TrendingUp, Trash2, GitBranch } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
   BarChart,
@@ -34,6 +34,10 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  LineChart,
+  Line,
+  ReferenceLine,
+  Legend,
 } from "recharts";
 
 export const Route = createFileRoute("/_authenticated/projects/$snapshotId")({
@@ -62,6 +66,13 @@ function SnapshotDetail() {
 
   const s = detail.data?.snapshot;
   const allProjects = portfolio.data?.projects ?? [];
+
+  // Trend data — load once we know the project_id
+  const trend = useQuery({
+    queryKey: ["trend", s?.project_id],
+    queryFn: () => api.trend(s!.project_id!),
+    enabled: !!s?.project_id,
+  });
 
   return (
     <div className="space-y-6">
@@ -122,19 +133,27 @@ function SnapshotDetail() {
                   <Badge variant="outline">Score {s.rag_score?.toFixed?.(1) ?? "—"}</Badge>
                   <Badge variant="outline">Confidence {s.confidence}</Badge>
                   <Badge variant="outline">DQ {s.data_quality_score?.toFixed?.(1) ?? "—"}</Badge>
+                  {/* AI Analysis badge — only shows if LLM ran, no provider name displayed */}
                   {s.agent_mode && s.agent_mode !== "offline" ? (
-                    <Badge className="gap-1 bg-primary/10 text-primary border-primary/30">
-                      <Bot className="h-3 w-3" />{s.agent_mode.replace("llm:", "")}
+                    <Badge className="gap-1 bg-emerald-500/10 text-emerald-700 border-emerald-500/30">
+                      <Bot className="h-3 w-3" /> AI Powered
                     </Badge>
                   ) : (
                     <Badge variant="secondary" className="gap-1">
-                      <Brain className="h-3 w-3" />Rule engine
+                      <Brain className="h-3 w-3" />Rule Engine
                     </Badge>
                   )}
+                  {/* PDF Export button */}
+                  <button
+                    onClick={() => window.open(api.exportPdfUrl(snapshotId), "_blank")}
+                    className="inline-flex items-center gap-1.5 rounded-md border border-border/60 bg-background px-3 py-1.5 text-xs font-medium hover:bg-muted transition-colors ml-1 cursor-pointer"
+                  >
+                    <FileDown className="h-3.5 w-3.5" /> Export PDF
+                  </button>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-8 text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/30 ml-2"
+                    className="h-8 text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/30 ml-1"
                     onClick={async () => {
                       if (confirm(`Are you sure you want to delete the snapshot for "${s.project_name}"?`)) {
                         try {
@@ -174,6 +193,8 @@ function SnapshotDetail() {
               <TabsTrigger value="reasoning">Why this status</TabsTrigger>
               <TabsTrigger value="signals">Signals</TabsTrigger>
               <TabsTrigger value="tasks">Task evidence</TabsTrigger>
+              <TabsTrigger value="gantt">Gantt Chart</TabsTrigger>
+              <TabsTrigger value="trend">Trend</TabsTrigger>
               <TabsTrigger value="comments">Comments</TabsTrigger>
               <TabsTrigger value="attributes">Preserved attributes</TabsTrigger>
             </TabsList>
@@ -181,7 +202,7 @@ function SnapshotDetail() {
             <TabsContent value="reasoning" className="mt-4 space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <ListCard title="Reasons" items={s.reasons} empty="No reasoning provided." />
-                <ListCard title="Top risks" items={s.top_risks} empty="No top risks flagged." icon={<AlertTriangle className="h-4 w-4 text-rag-red" />} />
+                <TopRisksCard items={s.top_risks} />
                 <ListCard title="Recommended actions" items={s.recommendations} empty="No recommendations returned." />
                 <ListCard title="Data caveats" items={s.caveats} empty="No caveats." />
               </div>
@@ -230,6 +251,28 @@ function SnapshotDetail() {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            {/* ── Trend Tab ────────────────────────────────────────────── */}
+            <TabsContent value="trend" className="mt-4">
+              {trend.isLoading ? (
+                <Loading label="Loading trend data…" />
+              ) : trend.isError ? (
+                <ErrorState message={(trend.error as Error).message} onRetry={() => trend.refetch()} />
+              ) : (
+                <TrendChart points={trend.data?.trend ?? []} currentSnapshotId={Number(snapshotId)} />
+              )}
+            </TabsContent>
+
+            {/* ── Gantt Tab ────────────────────────────────────────────── */}
+            <TabsContent value="gantt" className="mt-4">
+              {tasks.isLoading ? (
+                <Loading label="Loading tasks for Gantt…" />
+              ) : tasks.isError ? (
+                <ErrorState message={(tasks.error as Error).message} onRetry={() => tasks.refetch()} />
+              ) : (
+                <GanttChart tasks={tasks.data?.tasks ?? []} />
+              )}
+            </TabsContent>
           </Tabs>
         </>
       )}
@@ -265,7 +308,7 @@ function AgentInsightsPanel({
           <Bot className="h-4 w-4 text-primary" />
           AI Agent Insights
           <Badge variant="outline" className="ml-auto text-xs">
-            {isLlm ? `OpenAI · ${agentMode?.replace("llm:", "")}` : "Deterministic offline mode"}
+            {isLlm ? "AI Powered" : "Rule Engine"}
           </Badge>
         </CardTitle>
         <CardDescription className="text-xs">
@@ -314,6 +357,117 @@ function Loading({ label }: { label: string }) {
   );
 }
 
+function TopRisksCard({ items }: { items?: string[] }) {
+  /** Parse a raw risk string like:
+   *  "Row 14 | task_name: Design Phase | status: Not Started | health: Red | float: -3d | Comp: 0%"
+   *  or any free-text risk into structured chips + message.
+   */
+  function parseRisk(raw: string) {
+    // Try structured pipe-delimited format
+    if (raw.includes("|")) {
+      const parts = raw.split("|").map((p) => p.trim()).filter(Boolean);
+      // First part often is "Row N" or project name
+      const rowPart = parts[0];
+      const fields: { label: string; value: string; highlight?: boolean }[] = [];
+      for (const part of parts.slice(1)) {
+        const colonIdx = part.indexOf(":");
+        if (colonIdx !== -1) {
+          const label = part.slice(0, colonIdx).trim();
+          const value = part.slice(colonIdx + 1).trim();
+          const isRisk =
+            value.toLowerCase() === "red" ||
+            (label.toLowerCase() === "float" && value.startsWith("-")) ||
+            (label.toLowerCase() === "comp" && value === "0%");
+          fields.push({ label, value, highlight: isRisk });
+        } else {
+          fields.push({ label: "", value: part });
+        }
+      }
+      return { rowPart, fields, freeText: null };
+    }
+    // Free-text risk description — detect snake_case and clean it
+    const cleaned = raw
+      .replace(/_/g, " ")
+      .replace(/\brag\b/gi, "RAG")
+      .replace(/\bpct\b/gi, "%")
+      .replace(/\s{2,}/g, " ")
+      .trim();
+    return { rowPart: null, fields: [], freeText: cleaned };
+  }
+
+  function severityBadge(value: string) {
+    const v = value.toLowerCase();
+    if (v === "red") return "bg-red-500/10 text-red-600 border-red-500/30";
+    if (v === "amber" || v === "yellow") return "bg-amber-500/10 text-amber-600 border-amber-500/30";
+    if (v === "green") return "bg-emerald-500/10 text-emerald-600 border-emerald-500/30";
+    if (v.startsWith("-")) return "bg-red-500/10 text-red-600 border-red-500/30";
+    return "bg-muted text-muted-foreground border-border";
+  }
+
+  if (!items?.length) {
+    return (
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-rag-red" /> Top Risks
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">No top risks flagged.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 text-rag-red" /> Top Risks
+          <span className="ml-auto rounded-full bg-rag-red/10 text-rag-red text-xs font-bold px-2 py-0.5">
+            {items.length}
+          </span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ol className="space-y-3">
+          {items.map((raw, i) => {
+            const { rowPart, fields, freeText } = parseRisk(raw);
+            return (
+              <li key={i} className="rounded-lg border border-border/60 bg-muted/20 px-3 py-2.5 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-rag-red/15 text-rag-red text-[10px] font-bold shrink-0">
+                    {i + 1}
+                  </span>
+                  {rowPart && (
+                    <span className="text-xs font-semibold text-foreground">{rowPart}</span>
+                  )}
+                  {freeText && (
+                    <span className="text-sm leading-snug">{freeText}</span>
+                  )}
+                </div>
+                {fields.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pl-7">
+                    {fields.map((f, fi) => (
+                      <span
+                        key={fi}
+                        className={`inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[11px] font-medium ${f.highlight ? severityBadge(f.value) : "bg-muted/60 text-muted-foreground border-border/60"}`}
+                      >
+                        {f.label && <span className="opacity-60">{f.label}:</span>}
+                        <span>{f.value}</span>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </CardContent>
+    </Card>
+  );
+}
+
 function ListCard({ title, items, empty, icon }: { title: string; items?: string[]; empty: string; icon?: React.ReactNode }) {
   return (
     <Card>
@@ -332,6 +486,7 @@ function ListCard({ title, items, empty, icon }: { title: string; items?: string
     </Card>
   );
 }
+
 
 function SignalsView({ signals }: { signals: Signal[] }) {
   if (!signals?.length) return <EmptyState title="No signal breakdown returned by backend." />;
@@ -532,6 +687,297 @@ function CommentTable({ comments }: { comments: CommentRow[] }) {
             ))}
           </TableBody>
         </Table>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Trend Chart ─────────────────────────────────────────────────────────────
+
+function TrendChart({ points, currentSnapshotId }: { points: TrendPoint[]; currentSnapshotId: number }) {
+  if (points.length < 2) {
+    return (
+      <EmptyState
+        icon={<TrendingUp className="h-8 w-8" />}
+        title="Not enough data points"
+        description="At least 2 snapshots of this project are required to show a historical trend."
+      />
+    );
+  }
+
+  // Map to recharts format
+  const data = points.map((p) => ({
+    date: p.run_date,
+    score: p.rag_score,
+    dq: p.data_quality_score,
+    status: p.rag_status,
+    snapshotId: p.snapshot_id,
+    isCurrent: p.snapshot_id === currentSnapshotId,
+  }));
+
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "red": return "#ef4444";
+      case "amber": return "#f59e0b";
+      case "green": return "#22c55e";
+      default: return "#94a3b8";
+    }
+  };
+
+  const CustomDot = (props: any) => {
+    const { cx, cy, payload } = props;
+    if (cx == null || cy == null) return null;
+    return (
+      <circle
+        cx={cx}
+        cy={cy}
+        r={payload.isCurrent ? 6 : 4}
+        stroke={payload.isCurrent ? "#000" : "#fff"}
+        strokeWidth={2}
+        fill={getStatusColor(payload.status)}
+      />
+    );
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Historical RAG Score Trend</CardTitle>
+        <CardDescription>Visualizing AI-scored project health over time.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="h-[350px] w-full pt-4">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+              <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: 12 }} tickLine={false} axisLine={{ stroke: "#cbd5e1" }} />
+              <YAxis yAxisId="left" domain={[0, 100]} tick={{ fill: "#64748b", fontSize: 12 }} tickLine={false} axisLine={{ stroke: "#cbd5e1" }} />
+              <YAxis yAxisId="right" orientation="right" domain={[0, 100]} tick={{ fill: "#64748b", fontSize: 12 }} tickLine={false} axisLine={false} />
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    const data = payload[0].payload;
+                    return (
+                      <div className="rounded-lg border bg-background p-3 shadow-sm">
+                        <div className="text-sm font-semibold mb-1">{data.date}</div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getStatusColor(data.status) }} />
+                          <span className="font-medium text-foreground">{data.status}</span>
+                        </div>
+                        <div className="text-sm mt-1">
+                          <span className="text-muted-foreground">RAG Score:</span>{" "}
+                          <span className="font-medium">{data.score?.toFixed(1)}</span>
+                        </div>
+                        <div className="text-sm">
+                          <span className="text-muted-foreground">DQ Score:</span>{" "}
+                          <span className="font-medium">{data.dq?.toFixed(1)}</span>
+                        </div>
+                        {data.isCurrent && (
+                          <div className="text-xs text-primary font-medium mt-1">Current Snapshot</div>
+                        )}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "20px" }} />
+              <Line
+                yAxisId="left"
+                type="monotone"
+                dataKey="score"
+                name="RAG Score"
+                stroke="#64748b"
+                strokeWidth={2}
+                dot={<CustomDot />}
+                activeDot={{ r: 8 }}
+                isAnimationActive={false}
+              />
+              <Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="dq"
+                name="Data Quality Score"
+                stroke="#cbd5e1"
+                strokeWidth={2}
+                strokeDasharray="5 5"
+                dot={false}
+                isAnimationActive={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Gantt Chart ─────────────────────────────────────────────────────────────
+
+function GanttChart({ tasks }: { tasks: TaskRow[] }) {
+  if (!tasks.length) {
+    return <EmptyState icon={<GitBranch className="h-8 w-8" />} title="No tasks found for Gantt chart" />;
+  }
+
+  // 1. Filter out tasks with no start/end dates
+  const validTasks = tasks.filter((t) => t.start_date && t.end_date);
+  if (validTasks.length === 0) {
+    return <EmptyState icon={<GitBranch className="h-8 w-8" />} title="Tasks lack valid dates" description="Start or End dates are missing." />;
+  }
+
+  // 2. Determine timeline bounds
+  const minTime = Math.min(...validTasks.map((t) => new Date(t.start_date!).getTime()));
+  const maxTime = Math.max(...validTasks.map((t) => new Date(t.end_date!).getTime()));
+  
+  if (isNaN(minTime) || isNaN(maxTime) || minTime >= maxTime) {
+    return <EmptyState icon={<GitBranch className="h-8 w-8" />} title="Invalid date ranges" description="Dates could not be parsed correctly." />;
+  }
+
+  // 3. Setup dimensions
+  const DAY_MS = 1000 * 60 * 60 * 24;
+  const totalDays = Math.ceil((maxTime - minTime) / DAY_MS);
+  
+  const ROW_HEIGHT = 28;
+  const HEADER_HEIGHT = 40;
+  const LEFT_LABEL_WIDTH = 300;
+  
+  // Use a minimum pixel width per day to ensure readability, max of what fits
+  const pixelsPerDay = Math.max(3, Math.min(10, 800 / totalDays));
+  const chartWidth = totalDays * pixelsPerDay;
+  const svgHeight = HEADER_HEIGHT + validTasks.length * ROW_HEIGHT + 20;
+
+  const todayTime = new Date().getTime();
+  const todayX = ((todayTime - minTime) / DAY_MS) * pixelsPerDay;
+
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "red": return "#ef4444";
+      case "amber": case "yellow": return "#f59e0b";
+      case "green": return "#22c55e";
+      default: return "#94a3b8"; // Slate for grey/unspecified
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Schedule Gantt View</CardTitle>
+        <CardDescription>Grey dashed bars indicate baseline finish. Red outline indicates critical path.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto border rounded-md">
+          <svg width={LEFT_LABEL_WIDTH + chartWidth + 40} height={svgHeight} className="text-sm font-sans bg-white">
+            
+            {/* Header Background */}
+            <rect x={0} y={0} width="100%" height={HEADER_HEIGHT} fill="#f8fafc" borderBottom="1px solid #e2e8f0" />
+            <line x1={0} y1={HEADER_HEIGHT} x2="100%" y2={HEADER_HEIGHT} stroke="#e2e8f0" />
+
+            {/* Labels header */}
+            <text x={10} y={25} fill="#64748b" fontWeight={600} fontSize={12}>Task Name</text>
+            <text x={LEFT_LABEL_WIDTH - 60} y={25} fill="#64748b" fontWeight={600} fontSize={12}>Status</text>
+            
+            {/* Timeline ticks (approx monthly if long, weekly if short) */}
+            {Array.from({ length: Math.ceil(totalDays / 30) }).map((_, i) => {
+              const tickDays = i * 30;
+              const tickX = LEFT_LABEL_WIDTH + (tickDays * pixelsPerDay);
+              const tickDate = new Date(minTime + tickDays * DAY_MS);
+              return (
+                <g key={i}>
+                  <line x1={tickX} y1={HEADER_HEIGHT - 5} x2={tickX} y2={svgHeight} stroke="#e2e8f0" strokeDasharray="4 4" />
+                  <text x={tickX + 4} y={25} fill="#94a3b8" fontSize={11}>{tickDate.toLocaleDateString(undefined, { month: 'short', year: '2-digit' })}</text>
+                </g>
+              );
+            })}
+
+            {/* Today line */}
+            {todayX >= 0 && todayX <= chartWidth && (
+              <g>
+                <line x1={LEFT_LABEL_WIDTH + todayX} y1={0} x2={LEFT_LABEL_WIDTH + todayX} y2={svgHeight} stroke="#ef4444" strokeDasharray="2 2" strokeWidth={1.5} />
+                <text x={LEFT_LABEL_WIDTH + todayX + 4} y={15} fill="#ef4444" fontSize={10} fontWeight={600}>TODAY</text>
+              </g>
+            )}
+
+            {/* Tasks */}
+            {validTasks.map((t, idx) => {
+              const y = HEADER_HEIGHT + idx * ROW_HEIGHT;
+              const startT = new Date(t.start_date!).getTime();
+              const endT = new Date(t.end_date!).getTime();
+              
+              const xStart = LEFT_LABEL_WIDTH + ((startT - minTime) / DAY_MS) * pixelsPerDay;
+              const xEnd = LEFT_LABEL_WIDTH + ((endT - minTime) / DAY_MS) * pixelsPerDay;
+              const w = Math.max(xEnd - xStart, 4); // min width 4px
+
+              // Indentation
+              const indent = ((t.level || 1) - 1) * 12;
+              
+              // Colors
+              const color = getStatusColor(t.source_schedule_health);
+              const isMilestone = t.percent_complete === 100 || (t.phase_milestone && t.phase_milestone.toLowerCase().includes("milestone"));
+
+              return (
+                <g key={t.source_row} className="hover:opacity-80 transition-opacity">
+                  {/* Row background hover area */}
+                  <rect x={0} y={y} width="100%" height={ROW_HEIGHT} fill={idx % 2 === 0 ? "#ffffff" : "#f8fafc"} />
+                  <line x1={0} y1={y + ROW_HEIGHT} x2="100%" y2={y + ROW_HEIGHT} stroke="#f1f5f9" />
+
+                  {/* Task Name */}
+                  <text x={10 + indent} y={y + 18} fill="#334155" fontSize={12} className="truncate">
+                    {t.task_name.length > 40 ? t.task_name.substring(0, 40) + "..." : t.task_name}
+                  </text>
+                  
+                  {/* Status Badge */}
+                  <circle cx={LEFT_LABEL_WIDTH - 45} cy={y + 14} r={4} fill={color} />
+
+                  {/* Baseline indicator (if exists) */}
+                  {t.baseline_finish && (
+                    <rect 
+                      x={LEFT_LABEL_WIDTH + ((new Date(t.baseline_start || t.start_date!).getTime() - minTime) / DAY_MS) * pixelsPerDay}
+                      y={y + 12}
+                      width={Math.max(((new Date(t.baseline_finish).getTime() - new Date(t.baseline_start || t.start_date!).getTime()) / DAY_MS) * pixelsPerDay, 2)}
+                      height={4}
+                      fill="#cbd5e1"
+                    />
+                  )}
+
+                  {/* Main Task Bar */}
+                  {isMilestone ? (
+                    <polygon 
+                      points={`${xEnd},${y + 8} ${xEnd + 6},${y + 14} ${xEnd},${y + 20} ${xEnd - 6},${y + 14}`} 
+                      fill={color} 
+                      stroke={t.critical ? "#ef4444" : "none"}
+                      strokeWidth={t.critical ? 1.5 : 0}
+                    />
+                  ) : (
+                    <rect 
+                      x={xStart} 
+                      y={y + 6} 
+                      width={w} 
+                      height={16} 
+                      rx={3} 
+                      fill={color} 
+                      fillOpacity={0.8}
+                      stroke={t.critical ? "#ef4444" : "none"}
+                      strokeWidth={t.critical ? 2 : 0}
+                    />
+                  )}
+                  
+                  {/* Percent Complete overlay */}
+                  {!isMilestone && t.percent_complete != null && t.percent_complete > 0 && (
+                    <rect 
+                      x={xStart} 
+                      y={y + 12} 
+                      width={w * (t.percent_complete / 100)} 
+                      height={4} 
+                      fill="#000" 
+                      fillOpacity={0.2}
+                      rx={1}
+                    />
+                  )}
+                </g>
+              );
+            })}
+          </svg>
+        </div>
       </CardContent>
     </Card>
   );

@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { api, ApiError, type AnalyzeResponse } from "@/lib/api";
 import { RagBadge } from "@/components/rag-badge";
 import { EmptyState, ErrorState } from "@/components/empty-state";
-import { FileSpreadsheet, Loader2, Upload as UploadIcon, X } from "lucide-react";
+import { FileSpreadsheet, FileArchive, Loader2, Upload as UploadIcon, X, Download, Info, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/upload")({
@@ -23,7 +23,10 @@ function UploadPage() {
   const [error, setError] = useState<string | null>(null);
 
   function onSelect(e: React.ChangeEvent<HTMLInputElement>) {
-    const list = Array.from(e.target.files ?? []).filter((f) => f.name.toLowerCase().endsWith(".xlsx"));
+    const list = Array.from(e.target.files ?? []).filter((f) => {
+      const n = f.name.toLowerCase();
+      return n.endsWith(".xlsx") || n.endsWith(".zip");
+    });
     setFiles((prev) => {
       const seen = new Set(prev.map((p) => p.name + p.size));
       const merged = [...prev];
@@ -58,22 +61,61 @@ function UploadPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Upload &amp; analyze</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Upload & analyze</h1>
         <p className="text-sm text-muted-foreground">
           Upload one or more .xlsx project plan workbooks. The backend runs the RAG engine and returns snapshots.
         </p>
       </div>
 
+      {/* Template download banner */}
+      <div className="rounded-xl border border-blue-500/30 bg-blue-500/5 p-4">
+        <div className="flex items-start gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/15">
+            <FileSpreadsheet className="h-5 w-5 text-blue-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-1 flex items-center gap-2">
+              <Info className="h-4 w-4" /> Use the Official Project Plan Template
+            </div>
+            <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
+              Download our pre-formatted Excel template to ensure all required columns are present before uploading.
+              The template includes required column markers, dropdown validations, sample data, and a full column reference guide.
+            </p>
+            <div className="flex flex-wrap gap-4 text-xs text-muted-foreground mb-3">
+              {[
+                "Task Name, Status, % Complete",
+                "Schedule Health (Red/Amber/Green)",
+                "Start/End/Baseline Finish Dates",
+                "Total Float & Critical Path flag",
+              ].map((req) => (
+                <span key={req} className="flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                  {req}
+                </span>
+              ))}
+            </div>
+            <a
+              href="/api/template"
+              download="ProjectPulseAI_Project_Plan_Template.xlsx"
+              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 transition-colors"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Download Template (.xlsx)
+            </a>
+          </div>
+        </div>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><UploadIcon className="h-4 w-4" /> New analysis run</CardTitle>
-          <CardDescription>Only .xlsx files are accepted.</CardDescription>
+          <CardDescription>.xlsx files or a .zip archive containing multiple .xlsx files are accepted.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-[1fr_200px]">
             <div className="space-y-1.5">
               <Label htmlFor="files">Project plan files</Label>
-              <Input id="files" type="file" accept=".xlsx" multiple onChange={onSelect} />
+              <Input id="files" type="file" accept=".xlsx,.zip" multiple onChange={onSelect} />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="run-date">Run date (optional)</Label>
@@ -86,9 +128,14 @@ function UploadPage() {
               {files.map((f, i) => (
                 <li key={f.name + i} className="flex items-center justify-between px-3 py-2 text-sm">
                   <span className="flex items-center gap-2 truncate">
-                    <FileSpreadsheet className="h-4 w-4 text-primary shrink-0" />
+                    {f.name.toLowerCase().endsWith(".zip")
+                      ? <FileArchive className="h-4 w-4 text-amber-500 shrink-0" />
+                      : <FileSpreadsheet className="h-4 w-4 text-primary shrink-0" />}
                     <span className="truncate">{f.name}</span>
                     <span className="text-xs text-muted-foreground">{(f.size / 1024).toFixed(0)} KB</span>
+                    {f.name.toLowerCase().endsWith(".zip") && (
+                      <span className="text-[10px] font-semibold bg-amber-500/15 text-amber-600 px-1.5 py-0.5 rounded-full">ZIP</span>
+                    )}
                   </span>
                   <Button variant="ghost" size="icon" aria-label="Remove" onClick={() => remove(i)}>
                     <X className="h-4 w-4" />

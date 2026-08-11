@@ -32,7 +32,7 @@ const NAV = [
   { to: "/portfolio", label: "Portfolio", icon: BarChart3 },
   { to: "/reports", label: "Reports", icon: FileDown },
   { to: "/ask", label: "Ask Data", icon: MessageSquare },
-  { to: "/methodology", label: "How Project Works", icon: ScrollText },
+  { to: "/methodology", label: "How It Works", icon: ScrollText },
 ] as const;
 
 export function AppShell() {
