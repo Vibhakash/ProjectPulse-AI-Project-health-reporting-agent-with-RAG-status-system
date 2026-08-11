@@ -64,7 +64,7 @@ def send_rag_flip_alert(
     new_color, new_bg = _RAG_COLORS.get(new_status, ("#6B7280", "#F9FAFB"))
     ts = run_date or datetime.now().strftime("%Y-%m-%d")
 
-    subject = f"[ProjectPulse AI] {severity}: {project_name} — {old_status} → {new_status}"
+    subject = f"[ProjectPulse AI] {severity}: {project_name} - {old_status} -> {new_status}"
 
     html_body = f"""<!DOCTYPE html>
 <html>
@@ -98,7 +98,7 @@ def send_rag_flip_alert(
                   <p style="margin:0;font-size:12px;color:{old_color};font-weight:600;text-transform:uppercase;">Previous</p>
                   <p style="margin:4px 0 0;font-size:28px;font-weight:900;color:{old_color};">{old_status}</p>
                 </td>
-                <td style="padding:0 20px;font-size:28px;color:#9CA3AF;">→</td>
+                <td style="padding:0 20px;font-size:28px;color:#9CA3AF;">-&gt;</td>
                 <td style="background:{new_bg};border:2px solid {new_color};border-radius:8px;padding:16px 28px;text-align:center;">
                   <p style="margin:0;font-size:12px;color:{new_color};font-weight:600;text-transform:uppercase;">Current</p>
                   <p style="margin:4px 0 0;font-size:28px;font-weight:900;color:{new_color};">{new_status}</p>
