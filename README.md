@@ -4,11 +4,7 @@
 
 <div align="center">
 
-<a href="https://project-pulse-ai-project-health-rep.vercel.app/">
-
-![header](https://capsule-render.vercel.app/api?type=venom&color=0:4f46e5,50:7c3aed,100:a855f7&height=300&section=header&text=ProjectPulse%20AI&fontSize=80&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=%F0%9F%9A%A6%20Intelligent%20Project%20Health%20Reporting%20%26%20RAG%20Status%20System&descAlignY=60&descSize=18&descColor=e0d7ff)
-
-</a>
+  <img src="https://capsule-render.vercel.app/api?type=venom&color=0:4f46e5,50:7c3aed,100:a855f7&height=300&section=header&text=ProjectPulse%20AI&fontSize=80&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=%F0%9F%9A%A6%20Intelligent%20Project%20Health%20Reporting%20%26%20RAG%20Status%20System&descAlignY=60&descSize=18&descColor=e0d7ff" alt="ProjectPulse AI Header" width="100%">
 
 </div>
 
@@ -402,7 +398,7 @@ flowchart LR
 <br/>
 
 <a href="https://project-pulse-ai-project-health-rep.vercel.app/">
-  <img src="docs/qr_code.png" alt="Scan to open live demo" width="160"/>
+  <img src="C:\Users\Vibha\Desktop\vibha\Projects\ProjectPulseAI_Project-health-reporting-agent-with-RAG-status-system\QR code.png" alt="Scan to open live demo" width="160"/>
 </a>
 
 > 📲 **Scan the QR code** above to instantly open the live dashboard on any device!
