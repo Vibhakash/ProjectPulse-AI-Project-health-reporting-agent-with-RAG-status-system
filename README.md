@@ -5,7 +5,7 @@
 <div align="center">
 
   <a href="https://project-pulse-ai-project-health-rep.vercel.app/" title="Open the live ProjectPulse AI dashboard">
-    <img src="https://capsule-render.vercel.app/api?type=venom&amp;color=0:4f46e5,50:7c3aed,100:a855f7&amp;height=300&amp;section=header&amp;text=ProjectPulse%20AI&amp;fontSize=80&amp;fontColor=ffffff&amp;animation=fadeIn&amp;fontAlignY=38&amp;desc=%F0%9F%9A%A6%20Intelligent%20Project%20Health%20Reporting%20%26%20RAG%20Status%20System&amp;descAlignY=60&amp;descSize=18&amp;descColor=e0d7ff" alt="ProjectPulse AI — open the live dashboard" width="100%"/>
+    <img src="docs/projectpulse-header.png" alt="ProjectPulse AI — Intelligent Project Health Reporting and RAG Status System" width="100%"/>
   </a>
 
 </div>
