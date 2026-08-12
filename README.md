@@ -215,6 +215,7 @@ Add real screenshots once available, then uncomment:
 ### 1. Backend Setup
 
 ```bash
+cd backend
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
@@ -235,7 +236,7 @@ npm install
 
 | Terminal | Command | Runs on |
 |---|---|---|
-| **1 — Backend (FastAPI)** | `.venv\Scripts\python run_api.py` | `http://localhost:8001` |
+| **1 — Backend (FastAPI)** | `cd backend && .venv\Scripts\python run_api.py` | `http://localhost:8001` |
 | **2 — Frontend (Dev Server)** | `cd frontend && npm run dev` | `http://localhost:3000` |
 
 Then open **[http://localhost:3000](http://localhost:3000)** in your browser. 🎉
