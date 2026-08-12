@@ -282,4 +282,3 @@ copies of the Software.
 <p align="center"><i>✨ Because project status shouldn't be a guessing game — deterministic where it matters, intelligent where it helps. ✨</i></p>
 
 <hr/>
-<p align="center"><i>✨ Because project status shouldn't be a guessing game — deterministic where it matters, intelligent where it helps. ✨</i></p>
