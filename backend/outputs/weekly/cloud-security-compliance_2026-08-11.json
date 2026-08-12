@@ -1,0 +1,187 @@
+{
+  "run_date": "2026-08-11",
+  "project": {
+    "name": "Cloud Security Compliance",
+    "source_file": "C:\\Users\\Vibha\\AppData\\Local\\Temp\\tmpbknbax6m\\Project_Beta_CloudCompliance.xlsx",
+    "task_sheet": "Project Plan",
+    "summary": {
+      "Project Stage": "Unknown"
+    },
+    "all_task_columns": [
+      "% Complete",
+      "Baseline Finish",
+      "Baseline Start",
+      "Comments",
+      "Critical",
+      "End Date",
+      "Owner",
+      "Phase / Milestone",
+      "Schedule Health",
+      "Start Date",
+      "Status",
+      "Task Name",
+      "Total Float"
+    ]
+  },
+  "rag": {
+    "project_name": "Cloud Security Compliance",
+    "status": "Green",
+    "score": 23.2,
+    "confidence": "High",
+    "data_quality_score": 100,
+    "source_schedule_health": "Green",
+    "signals": [
+      {
+        "name": "schedule",
+        "weight": 30,
+        "raw_value": "red=0, amber_or_yellow=0, late=0",
+        "score": 0.0,
+        "weighted_score": 0.0,
+        "evidence": [
+          "0 red and 0 amber/yellow schedule-health rows",
+          "0 active tasks appear late"
+        ],
+        "triggered_override": false
+      },
+      {
+        "name": "progress",
+        "weight": 20,
+        "raw_value": "expected=75.0%, actual=55.83%, gap=19.17%",
+        "score": 0.7,
+        "weighted_score": 14.0,
+        "evidence": [
+          "Completion is 19.2 points behind expected timeline."
+        ],
+        "triggered_override": false
+      },
+      {
+        "name": "milestone",
+        "weight": 20,
+        "raw_value": "no milestone rows detected",
+        "score": -1,
+        "weighted_score": 0,
+        "evidence": [
+          "No milestone/phase rows detected."
+        ],
+        "triggered_override": false
+      },
+      {
+        "name": "blockers",
+        "weight": 15,
+        "raw_value": "blocker_rows=1",
+        "score": 0.2,
+        "weighted_score": 3.0,
+        "evidence": [
+          "1 task rows show blocker, critical-path, on-hold, negative-float, or keyword risk.",
+          "Row 3: 2.1 Risk Assessment"
+        ],
+        "triggered_override": false
+      },
+      {
+        "name": "sentiment",
+        "weight": 10,
+        "raw_value": "negative=1, positive=2, total=5",
+        "score": 0.04,
+        "weighted_score": 0.4,
+        "evidence": [
+          "Comment row 3: Risk register approved."
+        ],
+        "triggered_override": false
+      },
+      {
+        "name": "budget",
+        "weight": 5,
+        "raw_value": "budget fields unavailable",
+        "score": -1,
+        "weighted_score": 0,
+        "evidence": [
+          "Budget/burn columns are absent in the provided workbook."
+        ],
+        "triggered_override": false
+      }
+    ],
+    "reasons": [
+      "High confidence score and data quality score",
+      "Zero red or amber/yellow schedule health rows",
+      "Progress is behind expected timeline",
+      "One blocker task detected",
+      "Generally positive stakeholder sentiment"
+    ],
+    "top_risks": [
+      "Row 3: 2.1 Risk Assessment (Green)",
+      "Row 2: Compliance controls (source_row 2)",
+      "Row 5: Controls deployment (source_row 5)",
+      "Row 6: Audit pack in progress (source_row 6)"
+    ],
+    "recommendations": [
+      "Maintain current cadence and monitor for RAG movement",
+      "Address the blocker task at Row 3: 2.1 Risk Assessment",
+      "Continue to track progress against the expected timeline",
+      "Ensure all compliance controls are completed and signed off",
+      "Prepare for the final audit in 4 weeks",
+      "Review and update the risk register regularly"
+    ],
+    "caveats": [
+      "No milestone/phase rows detected.",
+      "Budget/burn columns are absent in the provided workbook.",
+      "No stakeholder comments available.",
+      "No milestone/phase rows detected",
+      "Budget/burn columns are absent in the provided workbook",
+      "Limited information on stakeholder comments and their impact on the project"
+    ],
+    "executive_summary": "The project's RAG status is Green, supported by a high confidence score of 23.2 and a data quality score of 100. Key evidence includes zero red or amber/yellow schedule health rows (source signals), and a progress score of 0.7, indicating the project is 19.2 points behind the expected timeline (source signals). The project has a blocker row detected at task 2.1 Risk Assessment (source_row 3).",
+    "sentiment_summary": "Stakeholder sentiment is generally positive, with comments indicating that all compliance controls are on track (source_row 2), the risk register has been approved (source_row 3), and controls deployment is 65% complete (source_row 5).",
+    "risk_themes": [
+      "Schedule Delays",
+      "Blocker Tasks",
+      "Compliance Risks",
+      "Audit Readiness",
+      "Resource Constraints"
+    ],
+    "agent_mode": "llm:groq",
+    "rag_flip_alert": null
+  },
+  "metrics": {
+    "task_count": 6,
+    "active_task_count": 4,
+    "milestone_count": 0,
+    "health_counts": {
+      "Green": 6
+    },
+    "status_counts": {
+      "In Progress": 2,
+      "Completed": 2,
+      "Not Started": 2
+    },
+    "average_percent_complete": 55.83,
+    "expected_progress": 75.0,
+    "progress_gap": 19.17,
+    "project_start": "2026-05-13",
+    "project_end": "2026-09-10",
+    "late_tasks": [],
+    "red_or_yellow_tasks": [],
+    "critical_negative_float_tasks": [],
+    "blocker_text_tasks": [
+      {
+        "row": 3,
+        "task": "2.1 Risk Assessment",
+        "health": "Green",
+        "status": "Completed",
+        "percent_complete": 100.0
+      }
+    ],
+    "comment_count": 5,
+    "summary": {
+      "Project Stage": "Unknown"
+    }
+  },
+  "data_quality_issues": [
+    {
+      "severity": "info",
+      "message": "No stakeholder comments available.",
+      "sheet_name": null,
+      "row_number": null,
+      "column_name": null
+    }
+  ]
+}

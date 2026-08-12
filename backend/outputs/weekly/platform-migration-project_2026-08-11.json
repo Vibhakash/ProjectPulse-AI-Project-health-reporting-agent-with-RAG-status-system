@@ -1,0 +1,290 @@
+{
+  "run_date": "2026-08-11",
+  "project": {
+    "name": "Platform Migration Project",
+    "source_file": "C:\\Users\\Vibha\\AppData\\Local\\Temp\\tmpewl0zgn3\\Project_Alpha_Week3.xlsx",
+    "task_sheet": "Project Plan",
+    "summary": {
+      "Project Stage": "Unknown"
+    },
+    "all_task_columns": [
+      "% Complete",
+      "Baseline Finish",
+      "Baseline Start",
+      "Comments",
+      "Critical",
+      "End Date",
+      "Owner",
+      "Phase / Milestone",
+      "Schedule Health",
+      "Start Date",
+      "Status",
+      "Task Name",
+      "Total Float"
+    ]
+  },
+  "rag": {
+    "project_name": "Platform Migration Project",
+    "status": "Red",
+    "score": 68.4,
+    "confidence": "High",
+    "data_quality_score": 100,
+    "source_schedule_health": "Red",
+    "signals": [
+      {
+        "name": "schedule",
+        "weight": 30,
+        "raw_value": "red=5, amber_or_yellow=0, late=1",
+        "score": 1,
+        "weighted_score": 30,
+        "evidence": [
+          "5 red and 0 amber/yellow schedule-health rows",
+          "1 active tasks appear late",
+          "Example at-risk row health: Red"
+        ],
+        "triggered_override": true
+      },
+      {
+        "name": "progress",
+        "weight": 20,
+        "raw_value": "expected=37.5%, actual=47.86%, gap=-10.36%",
+        "score": 0.1,
+        "weighted_score": 2.0,
+        "evidence": [
+          "Completion is 10.4 points ahead of expected timeline."
+        ],
+        "triggered_override": false
+      },
+      {
+        "name": "milestone",
+        "weight": 20,
+        "raw_value": "no milestone rows detected",
+        "score": -1,
+        "weighted_score": 0,
+        "evidence": [
+          "No milestone/phase rows detected."
+        ],
+        "triggered_override": false
+      },
+      {
+        "name": "blockers",
+        "weight": 15,
+        "raw_value": "blocker_rows=5",
+        "score": 1,
+        "weighted_score": 15,
+        "evidence": [
+          "5 task rows show blocker, critical-path, on-hold, negative-float, or keyword risk.",
+          "Row 2: Platform Migration Project",
+          "Row 5: 1.3 Dev Environment Setup",
+          "Row 6: 1.4 Core Module Development"
+        ],
+        "triggered_override": false
+      },
+      {
+        "name": "sentiment",
+        "weight": 10,
+        "raw_value": "negative=3, positive=0, total=7",
+        "score": 0.429,
+        "weighted_score": 4.286,
+        "evidence": [
+          "Comment row 5: BLOCKED \u2014 vendor contract terminated unexpectedly. Cannot proceed without a replacement partner.",
+          "Comment row 6: Cannot start. Predecessor is on hold. Risk of full programme delay.",
+          "Comment row 7: Not scheduled. Critical path at risk of 30+ day slip."
+        ],
+        "triggered_override": false
+      },
+      {
+        "name": "budget",
+        "weight": 5,
+        "raw_value": "budget fields unavailable",
+        "score": -1,
+        "weighted_score": 0,
+        "evidence": [
+          "Budget/burn columns are absent in the provided workbook."
+        ],
+        "triggered_override": false
+      }
+    ],
+    "reasons": [
+      "5 red schedule-health rows contribute to the Red RAG status",
+      "1 late task indicates potential delays",
+      "Blockers, such as the terminated vendor contract, hinder progress",
+      "Predecessor tasks being on hold delay subsequent tasks",
+      "Milestone misses require escalation and impact project timeline"
+    ],
+    "top_risks": [
+      "Row 2: Platform Migration Project (Red)",
+      "Row 5: 1.3 Dev Environment Setup (Red)",
+      "Row 6: 1.4 Core Module Development (Red)",
+      "Row 7: 1.5 Integration Testing (Red)",
+      "Row 8: MILESTONE: Phase 1 Sign-off (Red)"
+    ],
+    "recommendations": [
+      "Run a schedule recovery review focused on red/yellow rows and near-term milestones",
+      "Create an escalation list for critical-path, pending, and dependency-driven blockers",
+      "Address vendor contract termination and find a replacement partner",
+      "Resolve predecessor task hold-ups to allow subsequent tasks to proceed",
+      "Develop a mitigation plan for milestone misses and their impact on the project timeline",
+      "Conduct regular progress reviews to identify and address emerging risks"
+    ],
+    "caveats": [
+      "No milestone/phase rows detected.",
+      "Budget/burn columns are absent in the provided workbook.",
+      "No stakeholder comments available.",
+      "No milestone/phase rows detected in the provided data",
+      "Budget/burn columns are absent in the provided workbook, limiting financial analysis",
+      "Initial data quality issues noted, but the data quality score is 100, indicating high-quality data for the available fields"
+    ],
+    "executive_summary": "The project's RAG status is Red, primarily due to 5 red schedule-health rows and 1 late task, as seen in source rows 2, 5, 6, 7, and 8. The project is also facing significant risks, including vendor contract termination and predecessor tasks being on hold. The average completion is 47.86% versus the expected progress of 37.5%, but this progress is overshadowed by critical path risks and blockers.",
+    "sentiment_summary": "Stakeholders have expressed significant concerns, with comments indicating that the project is blocked due to a terminated vendor contract (source row 5), cannot start because predecessors are on hold (source row 6), and is at risk of a 30+ day slip (source row 7). Additionally, a milestone was missed, requiring board-level escalation (source row 8).",
+    "risk_themes": [
+      "Vendor Contract Risks",
+      "Predecessor Task Delays",
+      "Critical Path Risks",
+      "Blockers and Hold-ups",
+      "Milestone Misses"
+    ],
+    "agent_mode": "llm:groq",
+    "rag_flip_alert": null
+  },
+  "metrics": {
+    "task_count": 7,
+    "active_task_count": 5,
+    "milestone_count": 0,
+    "health_counts": {
+      "Red": 5,
+      "Green": 2
+    },
+    "status_counts": {
+      "In Progress": 1,
+      "Completed": 2,
+      "On Hold": 1,
+      "Not Started": 2,
+      "Missed": 1
+    },
+    "average_percent_complete": 47.86,
+    "expected_progress": 37.5,
+    "progress_gap": -10.36,
+    "project_start": "2026-06-12",
+    "project_end": "2026-11-19",
+    "late_tasks": [
+      {
+        "row": 8,
+        "task": "MILESTONE: Phase 1 Sign-off",
+        "health": "Red",
+        "status": "Missed",
+        "percent_complete": 0.0
+      }
+    ],
+    "red_or_yellow_tasks": [
+      {
+        "row": 2,
+        "task": "Platform Migration Project",
+        "health": "Red",
+        "status": "In Progress",
+        "percent_complete": 55.0
+      },
+      {
+        "row": 5,
+        "task": "1.3 Dev Environment Setup",
+        "health": "Red",
+        "status": "On Hold",
+        "percent_complete": 80.0
+      },
+      {
+        "row": 6,
+        "task": "1.4 Core Module Development",
+        "health": "Red",
+        "status": "Not Started",
+        "percent_complete": 0.0
+      },
+      {
+        "row": 7,
+        "task": "1.5 Integration Testing",
+        "health": "Red",
+        "status": "Not Started",
+        "percent_complete": 0.0
+      },
+      {
+        "row": 8,
+        "task": "MILESTONE: Phase 1 Sign-off",
+        "health": "Red",
+        "status": "Missed",
+        "percent_complete": 0.0
+      }
+    ],
+    "critical_negative_float_tasks": [
+      {
+        "row": 2,
+        "task": "Platform Migration Project",
+        "health": "Red",
+        "status": "In Progress",
+        "percent_complete": 55.0
+      },
+      {
+        "row": 5,
+        "task": "1.3 Dev Environment Setup",
+        "health": "Red",
+        "status": "On Hold",
+        "percent_complete": 80.0
+      },
+      {
+        "row": 6,
+        "task": "1.4 Core Module Development",
+        "health": "Red",
+        "status": "Not Started",
+        "percent_complete": 0.0
+      },
+      {
+        "row": 7,
+        "task": "1.5 Integration Testing",
+        "health": "Red",
+        "status": "Not Started",
+        "percent_complete": 0.0
+      },
+      {
+        "row": 8,
+        "task": "MILESTONE: Phase 1 Sign-off",
+        "health": "Red",
+        "status": "Missed",
+        "percent_complete": 0.0
+      }
+    ],
+    "blocker_text_tasks": [
+      {
+        "row": 5,
+        "task": "1.3 Dev Environment Setup",
+        "health": "Red",
+        "status": "On Hold",
+        "percent_complete": 80.0
+      },
+      {
+        "row": 6,
+        "task": "1.4 Core Module Development",
+        "health": "Red",
+        "status": "Not Started",
+        "percent_complete": 0.0
+      },
+      {
+        "row": 7,
+        "task": "1.5 Integration Testing",
+        "health": "Red",
+        "status": "Not Started",
+        "percent_complete": 0.0
+      }
+    ],
+    "comment_count": 7,
+    "summary": {
+      "Project Stage": "Unknown"
+    }
+  },
+  "data_quality_issues": [
+    {
+      "severity": "info",
+      "message": "No stakeholder comments available.",
+      "sheet_name": null,
+      "row_number": null,
+      "column_name": null
+    }
+  ]
+}
