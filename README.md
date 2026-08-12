@@ -4,7 +4,11 @@
 
 <div align="center">
 
-![header](https://capsule-render.vercel.app/api?type=venom&color=0:4f46e5,50:7c3aed,100:a855f7&height=300&section=header&text=ProjectPulse%20AI&fontSize=80&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=🚦%20Intelligent%20Project%20Health%20Reporting%20%26%20RAG%20Status%20System&descAlignY=60&descSize=18&descColor=e0d7ff)
+<a href="https://project-pulse-ai-project-health-rep.vercel.app/">
+
+![header](https://capsule-render.vercel.app/api?type=venom&color=0:4f46e5,50:7c3aed,100:a855f7&height=300&section=header&text=ProjectPulse%20AI&fontSize=80&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=%F0%9F%9A%A6%20Intelligent%20Project%20Health%20Reporting%20%26%20RAG%20Status%20System&descAlignY=60&descSize=18&descColor=e0d7ff)
+
+</a>
 
 </div>
 
@@ -274,18 +278,33 @@ Auto-generates a 6-slide executive PowerPoint deck from all project snapshots in
 
 <div align="center">
 
-```
-📁 Upload .xlsx / .zip
-        ↓
-🔍 Parse & Normalize Sheets  →  🏗️ Reconstruct WBS Hierarchy
-        ↓
-💬 Extract Inline Comments  →  🌐 Detect & Translate (if non-English)
-        ↓
-📊 Sentiment Analysis  →  ⚖️ Deterministic RAG Scoring
-        ↓
-🤖 LLM Narrative Synthesis  →  💾 Persist Snapshot (SQLite)
-        ↓                              ↓
-📈 Dashboard: RAG + Gantt + Trends    📄 One-Click PDF Export
+```mermaid
+flowchart LR
+    A(["📁 Upload\n.xlsx / .zip"]) --> B["🔍 Parse &\nNormalize Sheets"]
+    B --> C["🏗️ Reconstruct\nWBS Hierarchy"]
+    C --> D["💬 Extract\nInline Comments"]
+    D --> E{"🌐 Non-English\nComment?"}
+    E -->|Yes| F["🔤 Detect +\nTranslate"]
+    E -->|No| G["📊 Sentiment\nAnalysis"]
+    F --> G
+    G --> H["⚖️ Deterministic\nRAG Scoring"]
+    H --> I["🤖 LLM Narrative\nSynthesis"]
+    I --> J[("💾 SQLite\nSnapshot")]
+    J --> K["📈 Dashboard:\nRAG + Gantt + Trends"]
+    J --> L["📄 PDF\nExport"]
+
+    style A fill:#4f46e5,color:#fff,stroke:#4f46e5
+    style B fill:#7c3aed,color:#fff,stroke:#7c3aed
+    style C fill:#7c3aed,color:#fff,stroke:#7c3aed
+    style D fill:#9333ea,color:#fff,stroke:#9333ea
+    style E fill:#ec4899,color:#fff,stroke:#ec4899
+    style F fill:#f59e0b,color:#fff,stroke:#f59e0b
+    style G fill:#0891b2,color:#fff,stroke:#0891b2
+    style H fill:#059669,color:#fff,stroke:#059669
+    style I fill:#d97706,color:#fff,stroke:#d97706
+    style J fill:#1e40af,color:#fff,stroke:#1e40af
+    style K fill:#16a34a,color:#fff,stroke:#16a34a
+    style L fill:#dc2626,color:#fff,stroke:#dc2626
 ```
 
 </div>
@@ -379,6 +398,14 @@ Auto-generates a 6-slide executive PowerPoint deck from all project snapshots in
 | **Frontend Dashboard** | [project-pulse-ai-project-health-rep.vercel.app](https://project-pulse-ai-project-health-rep.vercel.app/) | ![Vercel](https://img.shields.io/badge/Live-22C55E?style=flat-square) |
 | **Backend API** | [projectpulse-ai-project-health-reporting.onrender.com](https://projectpulse-ai-project-health-reporting.onrender.com) | ![Render](https://img.shields.io/badge/Live-22C55E?style=flat-square) |
 | **API Docs (Swagger)** | [.../docs](https://projectpulse-ai-project-health-reporting.onrender.com/docs) | ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=flat-square&logo=swagger&logoColor=black) |
+
+<br/>
+
+<a href="https://project-pulse-ai-project-health-rep.vercel.app/">
+  <img src="docs/qr_code.png" alt="Scan to open live demo" width="160"/>
+</a>
+
+> 📲 **Scan the QR code** above to instantly open the live dashboard on any device!
 
 </div>
 
