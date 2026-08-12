@@ -1,22 +1,21 @@
+<h1 align="center">🚀 ProjectPulse AI</h1>
+<h3 align="center">Health Reporting Agent & RAG Status System</h3>
+
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:667eea,100:764ba2&height=230&section=header&text=ProjectPulse%20AI&fontSize=52&fontColor=ffffff&animation=fadeIn&fontAlignY=32&desc=Health%20Reporting%20Agent%20%26%20RAG%20Status%20System&descAlignY=52&descSize=18" width="100%"/>
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=18&pause=1200&color=764BA2&center=true&vCenter=true&width=750&lines=Deterministic+RAG+Scoring+%2B+LLM+Narrative+Insights;Multi-Sheet+Excel+Ingestion+%E2%86%92+Auditable+Health+Reports;Interactive+Gantt+Charts+%7C+Historical+Trend+Tracking;One-Click+Premium+PDF+Executive+Reports" alt="Typing SVG"/>
 </p>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=20&pause=1200&color=764BA2&center=true&vCenter=true&width=750&lines=Deterministic+RAG+Scoring+%2B+LLM+Narrative+Insights;Multi-Sheet+Excel+Ingestion+%E2%86%92+Auditable+Health+Reports;Interactive+Gantt+Charts+%7C+Historical+Trend+Tracking;One-Click+Premium+PDF+Executive+Reports" alt="Typing SVG"/>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=nodedotjs&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Backend-Render-46E3B7?style=flat-square&logo=render&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Frontend-Vercel-000000?style=flat-square&logo=vercel&logoColor=white"/>
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square"/>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white"/></a>
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=nodedotjs&logoColor=white"/></a>
+  <a href="https://projectpulse-ai-project-health-reporting.onrender.com"><img src="https://img.shields.io/badge/Backend-Render-46E3B7?style=flat-square&logo=render&logoColor=white"/></a>
+  <a href="https://project-pulse-ai-project-health-rep.vercel.app/"><img src="https://img.shields.io/badge/Frontend-Vercel-000000?style=flat-square&logo=vercel&logoColor=white"/></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square"/></a>
   <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square"/>
 </p>
 
 <p align="center">
-  <img src="https://skillicons.dev/icons?i=python,fastapi,react,nodejs,sqlite,javascript,html,css,vercel,render,git,github"/>
+  <img src="https://skillicons.dev/icons?i=python,fastapi,react,nodejs,sqlite,js,html,css,vercel,git,github" alt="Tech stack icons"/>
 </p>
 
 <p align="center"><i>An intelligent project-health reporting &amp; RAG synthesis agent — it parses messy multi-sheet Excel schedules, computes a deterministic RAG score, layers LLM-derived stakeholder sentiment and narrative summaries on top, and presents it all in a modern React dashboard with historical trends and premium PDF exports.</i></p>
@@ -81,62 +80,18 @@ Every score traces back to a source row, a task comment, or a signal — nothing
 <a name="architecture"></a>
 ## 🏗️ System Architecture
 
-```mermaid
-flowchart TB
-    subgraph Client["🖥️ Frontend — React (deployed on Vercel)"]
-        UI["Dashboard UI"]
-        Gantt["Gantt Chart View"]
-        Trends["Trend Charts (Recharts)"]
-        Methodology["Methodology Tab"]
-    end
-
-    subgraph Server["⚙️ Backend — FastAPI (deployed on Render)"]
-        API["REST API Layer"]
-        Ingest["Excel / ZIP Ingestion Engine"]
-        RAG["Deterministic RAG Rule Engine"]
-        LLM["LLM Insight Layer"]
-        PDF["PDF Report Generator (ReportLab)"]
-    end
-
-    subgraph Data["🗄️ Persistence"]
-        DB[("SQLite")]
-    end
-
-    UI -->|"HTTPS"| API
-    Gantt --> API
-    Trends --> API
-    Methodology --> API
-
-    API --> Ingest
-    Ingest --> RAG
-    RAG --> LLM
-    RAG --> DB
-    LLM --> DB
-    API --> PDF
-    PDF --> DB
-    DB --> API
-```
+<p align="center">
+  <img src="docs/system_architecture.png" alt="System Architecture Diagram" width="90%"/>
+</p>
 
 ---
 
 <a name="workflow"></a>
 ## 🔄 Workflow / Data Pipeline
 
-```mermaid
-flowchart LR
-    A["📁 Upload .xlsx / .zip"] --> B["🔍 Parse & Normalize Sheets"]
-    B --> C["🏗️ Reconstruct WBS Hierarchy"]
-    C --> D["💬 Extract Inline Comments"]
-    D --> E{"🌐 Non-English Comment?"}
-    E -->|"Yes"| F["🔤 Detect + Translate"]
-    E -->|"No"| G["📊 Sentiment Analysis"]
-    F --> G
-    G --> H["⚖️ Deterministic RAG Scoring"]
-    H --> I["🤖 LLM Narrative Synthesis"]
-    I --> J[("💾 Persist Snapshot — SQLite")]
-    J --> K["📈 Dashboard: RAG + Gantt + Trends"]
-    J --> L["📄 One-Click PDF Export"]
-```
+<p align="center">
+  <img src="docs/data_pipeline.png" alt="Data Pipeline Diagram" width="90%"/>
+</p>
 
 ---
 
@@ -246,12 +201,12 @@ Then open **[http://localhost:3000](http://localhost:3000)** in your browser. �
 <a name="deployment"></a>
 ## 🚀 Deployment
 
-| Layer | Platform | Notes |
+| Layer | Platform | Live URL |
 |---|---|---|
-| **Backend — FastAPI** | ![Render](https://img.shields.io/badge/Render-46E3B7?style=flat-square&logo=render&logoColor=white) | Add your live Render URL here, e.g. `https://projectpulse-api.onrender.com` |
-| **Frontend — React** | ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white) | Add your live Vercel URL here, e.g. `https://projectpulse-ai.vercel.app` |
+| **Backend — FastAPI** | [![Render](https://img.shields.io/badge/Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://projectpulse-ai-project-health-reporting.onrender.com) | [projectpulse-ai-project-health-reporting.onrender.com](https://projectpulse-ai-project-health-reporting.onrender.com) |
+| **Frontend — React** | [![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)](https://project-pulse-ai-project-health-rep.vercel.app/) | [project-pulse-ai-project-health-rep.vercel.app](https://project-pulse-ai-project-health-rep.vercel.app/) |
 
-Once both are live, point the frontend's API base URL environment variable at your deployed Render backend so the two services can talk to each other in production.
+The frontend's `VITE_API_BASE_URL` environment variable is set to the live Render backend URL so the two services communicate in production.
 
 ---
 
@@ -299,7 +254,17 @@ This split keeps the analytical logic reusable across CLI, API, scheduler, or da
 <a name="license"></a>
 ## 📄 License
 
-This project is licensed under the **MIT License**. Add a `LICENSE` file at the repo root to match (or swap this section for whichever license you actually intend to use).
+This project is licensed under the **[MIT License](./LICENSE)**.
+
+```
+MIT License — Copyright (c) 2026 Vibha Kashyap
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software.
+```
 
 ---
 
@@ -316,4 +281,5 @@ This project is licensed under the **MIT License**. Add a `LICENSE` file at the 
 
 <p align="center"><i>✨ Because project status shouldn't be a guessing game — deterministic where it matters, intelligent where it helps. ✨</i></p>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:667eea,100:764ba2&height=120&section=footer" width="100%"/>
+<hr/>
+<p align="center"><i>✨ Because project status shouldn't be a guessing game — deterministic where it matters, intelligent where it helps. ✨</i></p>
