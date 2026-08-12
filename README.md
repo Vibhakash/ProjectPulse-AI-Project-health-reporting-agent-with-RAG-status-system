@@ -1,284 +1,623 @@
-<h1 align="center">🚀 ProjectPulse AI</h1>
-<h3 align="center">Health Reporting Agent & RAG Status System</h3>
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                        ANIMATED HEADER                            -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 
-<p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=18&pause=1200&color=764BA2&center=true&vCenter=true&width=750&lines=Deterministic+RAG+Scoring+%2B+LLM+Narrative+Insights;Multi-Sheet+Excel+Ingestion+%E2%86%92+Auditable+Health+Reports;Interactive+Gantt+Charts+%7C+Historical+Trend+Tracking;One-Click+Premium+PDF+Executive+Reports" alt="Typing SVG"/>
-</p>
+<div align="center">
 
-<p align="center">
-  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white"/></a>
-  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=nodedotjs&logoColor=white"/></a>
-  <a href="https://projectpulse-ai-project-health-reporting.onrender.com"><img src="https://img.shields.io/badge/Backend-Render-46E3B7?style=flat-square&logo=render&logoColor=white"/></a>
-  <a href="https://project-pulse-ai-project-health-rep.vercel.app/"><img src="https://img.shields.io/badge/Frontend-Vercel-000000?style=flat-square&logo=vercel&logoColor=white"/></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square"/></a>
-  <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square"/>
-</p>
+![header](https://capsule-render.vercel.app/api?type=venom&color=0:4f46e5,50:7c3aed,100:a855f7&height=300&section=header&text=ProjectPulse%20AI&fontSize=80&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=🚦%20Intelligent%20Project%20Health%20Reporting%20%26%20RAG%20Status%20System&descAlignY=60&descSize=18&descColor=e0d7ff)
 
-<p align="center">
-  <img src="https://skillicons.dev/icons?i=python,fastapi,react,nodejs,sqlite,js,html,css,vercel,git,github" alt="Tech stack icons"/>
-</p>
+</div>
 
-<p align="center"><i>An intelligent project-health reporting &amp; RAG synthesis agent — it parses messy multi-sheet Excel schedules, computes a deterministic RAG score, layers LLM-derived stakeholder sentiment and narrative summaries on top, and presents it all in a modern React dashboard with historical trends and premium PDF exports.</i></p>
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                        TYPING ANIMATION                           -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+<div align="center">
+
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1000&color=A855F7&center=true&vCenter=true&width=800&height=50&lines=🎯+Deterministic+RAG+Scoring+Engine;🤖+LLM-Powered+AI+Narrative+Insights;📊+Interactive+Gantt+%26+Trend+Charts;📄+One-Click+Premium+PDF+Exports;🌐+Multi-Language+Sentiment+Analysis)](https://git.io/typing-svg)
+
+</div>
 
 ---
 
-## 📑 Table of Contents
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                           BADGES                                  -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 
-- [📖 Overview](#overview)
-  - [🎯 The Problem](#the-problem)
-  - [💡 The Solution](#the-solution)
-- [🌟 Core Features](#features)
-- [🏗️ System Architecture](#architecture)
-- [🔄 Workflow / Data Pipeline](#workflow)
-- [🛠️ Tech Stack](#tech-stack)
-- [🎬 Demo](#demo)
-- [📦 Deliverables Map](#deliverables)
-- [⚙️ Getting Started](#getting-started)
-- [▶️ Running the Application](#running)
-- [🚀 Deployment](#deployment)
-- [🧩 Design Decisions & Architecture Rationale](#design-decisions)
-- [📄 License](#license)
-- [👩‍💻 Author](#author)
+<div align="center">
 
----
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)&nbsp;
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)&nbsp;
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)&nbsp;
+[![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org/)&nbsp;
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 
-<a name="overview"></a>
-## 📖 Overview
+[![Backend](https://img.shields.io/badge/🚀%20Backend%20Live%20on-Render-46E3B7?style=for-the-badge)](https://projectpulse-ai-project-health-reporting.onrender.com)&nbsp;
+[![Frontend](https://img.shields.io/badge/🌐%20Frontend%20Live%20on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://project-pulse-ai-project-health-rep.vercel.app/)&nbsp;
+[![License](https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge)](./LICENSE)&nbsp;
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-22C55E?style=for-the-badge&logo=github)](https://github.com/Vibhakash/ProjectPulse-AI-Project-health-reporting-agent-with-RAG-status-system/pulls)
 
-<a name="the-problem"></a>
-### 🎯 The Problem
-
-Traditional project status reporting is manual, subjective, and disconnected. Health calls depend on whoever compiled the spreadsheet that week, stakeholder sentiment buried in free-text comment cells goes unread, and by the time an executive summary lands on someone's desk there's no way to trace **why** a project was marked Red, Amber, or Green.
-
-<a name="the-solution"></a>
-### 💡 The Solution
-
-ProjectPulse AI splits **scoring** and **storytelling** into two separate jobs:
-
-1. A **deterministic rule engine** reads the evidence — schedule health, progress gaps, milestone status, blockers, sentiment, budget — and computes an auditable RAG score first.
-2. An **LLM layer** then turns that computed evidence into an executive-ready narrative: key drivers, top risks, and recommendations.
-
-Every score traces back to a source row, a task comment, or a signal — nothing is a black box.
+</div>
 
 ---
 
-<a name="features"></a>
-## 🌟 Core Features
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                         TECH ICONS                                -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 
-| Feature | What it does |
-|---|---|
-| 🎯 **Dynamic RAG Scoring Engine** | Deterministic rule engine computing schedule health, unmitigated risks, and milestone slips into an auditable RAG score |
-| 🤖 **AI Agent Insights** | LLM-powered narrative generation — Key Drivers, Top Risks, and Recommendations — grounded in the rule engine's signals |
-| 📈 **Historical Trend Tracking** | Groups snapshots over time and visualizes RAG trajectory via an interactive Recharts line graph |
-| 📊 **Interactive Gantt Charts** | Visual timeline of every task, highlighting baseline drift and schedule slippage |
-| 🌐 **Multi-Language Sentiment Analysis** | Detects, translates, and incorporates non-English stakeholder comments (e.g., French) into sentiment summaries |
-| 📄 **Premium PDF Exports** | One-click, polished, offline executive reports built with ReportLab, matching the dashboard's aesthetic |
-| 🗂️ **Robust Bulk Ingestion** | Drop in `.zip` archives spanning multiple weeks — processed entirely in-memory, bypassing file-lock issues |
+<div align="center">
 
----
+### 🛠️ Built With
 
-<a name="architecture"></a>
-## 🏗️ System Architecture
+<img src="https://skillicons.dev/icons?i=python,fastapi,react,nodejs,sqlite,js,html,css,vercel,git,github&theme=dark" alt="Tech stack icons"/>
 
-<p align="center">
-  <img src="docs/system_architecture.png" alt="System Architecture Diagram" width="90%"/>
-</p>
+</div>
 
 ---
 
-<a name="workflow"></a>
-## 🔄 Workflow / Data Pipeline
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                          DESCRIPTION                              -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 
-<p align="center">
-  <img src="docs/data_pipeline.png" alt="Data Pipeline Diagram" width="90%"/>
-</p>
-
----
-
-<a name="tech-stack"></a>
-## 🛠️ Tech Stack
+<div align="center">
 
 <table>
-<tr><td><b>Backend</b></td><td>
-<img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
-<img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white"/>
-</td></tr>
-<tr><td><b>Frontend</b></td><td>
-<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"/>
-<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"/>
-<img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"/>
-</td></tr>
-<tr><td><b>Data Visualization</b></td><td>
-<img src="https://img.shields.io/badge/Recharts-22B5BF?style=for-the-badge"/>
-</td></tr>
-<tr><td><b>Reporting</b></td><td>
-<img src="https://img.shields.io/badge/ReportLab-CC3333?style=for-the-badge"/>
-</td></tr>
-<tr><td><b>Database</b></td><td>
-<img src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white"/>
-</td></tr>
-<tr><td><b>Deployment</b></td><td>
-<img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white"/>
-<img src="https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white"/>
-</td></tr>
-<tr><td><b>Tooling</b></td><td>
-<img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white"/>
-<img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
-</td></tr>
+<tr>
+<td align="center" width="100%">
+
+> 🧠 **ProjectPulse AI** is an intelligent project-health reporting agent that parses messy multi-sheet Excel schedules, computes a **deterministic RAG score**, layers **LLM-derived stakeholder sentiment** and narrative summaries on top, and presents everything in a **modern React dashboard** with historical trends, interactive Gantt charts, and one-click PDF exports.
+
+</td>
+</tr>
+</table>
+
+</div>
+
+---
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                       TABLE OF CONTENTS                           -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+<details open>
+<summary><h2>📑 Table of Contents</h2></summary>
+
+| # | Section |
+|:---:|---|
+| 1 | [🎯 The Problem & Solution](#-the-problem--solution) |
+| 2 | [✨ Core Features](#-core-features) |
+| 3 | [🏗️ System Architecture](#%EF%B8%8F-system-architecture) |
+| 4 | [🔄 Data Pipeline](#-data-pipeline) |
+| 5 | [🛠️ Full Tech Stack](#%EF%B8%8F-full-tech-stack) |
+| 6 | [🎬 Demo & Live Links](#-demo--live-links) |
+| 7 | [📦 Deliverables Map](#-deliverables-map) |
+| 8 | [⚙️ Local Setup](#%EF%B8%8F-local-setup) |
+| 9 | [🚀 Deployment](#-deployment) |
+| 10 | [🧩 Design Decisions](#-design-decisions) |
+| 11 | [📄 License & Author](#-license--author) |
+
+</details>
+
+---
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                    THE PROBLEM & SOLUTION                         -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+## 🎯 The Problem & Solution
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### ❌ The Problem
+
+Traditional project status reporting is:
+
+- 🤷 **Manual & Subjective** — health calls depend on whoever made the spreadsheet
+- 🔒 **Untraceablе** — no way to see *why* a project is Red, Amber, or Green
+- 🙈 **Sentiment Blind** — stakeholder comments buried in free-text cells go unread
+- 🐌 **Delayed** — by the time an executive summary is ready, it's outdated
+
+</td>
+<td width="50%" valign="top">
+
+### ✅ The Solution
+
+ProjectPulse AI splits **scoring** and **storytelling** into two jobs:
+
+- ⚖️ A **deterministic rule engine** computes an *auditable* RAG score from measurable signals
+- 🤖 An **LLM layer** transforms the evidence into an executive-ready narrative
+- 📈 **Historical snapshots** track every project's health trajectory over time
+- 🔎 Every score traces back to a **source row** — nothing is a black box
+
+</td>
+</tr>
 </table>
 
 ---
 
-<a name="demo"></a>
-## 🎬 Demo
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                        CORE FEATURES                              -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 
-> 🎥 A full walkthrough — **`Zycus-ProjectPulse AI-by Vibha Kashyap.mp4`** — is available in the project folder locally.
->
-> It isn't committed to this repository because it's **~172 MB**, over GitHub's 100 MB per-file limit. Everything else — source code, docs, sample inputs, generated reports, and the runnable app — lives in this repo. Share the video separately, or host it via **Git LFS**, an unlisted YouTube upload, or cloud storage, then link it here.
+## ✨ Core Features
 
-<!--
-Add real screenshots once available, then uncomment:
-<p align="center">
-  <img src="docs/screenshots/dashboard.png" alt="Dashboard Screenshot" width="80%"/>
-</p>
--->
+<div align="center">
+
+<table>
+<tr>
+<td align="center" width="33%">
+
+### 🎯
+**Dynamic RAG Engine**
+
+Deterministic rule engine computing schedule health, unmitigated risks, and milestone slips into an auditable RAG score
+
+</td>
+<td align="center" width="33%">
+
+### 🤖
+**AI Agent Insights**
+
+LLM-powered Key Drivers, Top Risks, and Recommendations grounded in real signal evidence
+
+</td>
+<td align="center" width="33%">
+
+### 📈
+**Historical Trends**
+
+Groups snapshots over time and visualizes RAG trajectory via an interactive Recharts line graph
+
+</td>
+</tr>
+<tr>
+<td align="center">
+
+### 📊
+**Interactive Gantt Charts**
+
+Visual task timeline highlighting baseline drift and schedule slippage — built into the dashboard
+
+</td>
+<td align="center">
+
+### 🌐
+**Multi-Language Sentiment**
+
+Detects, translates, and incorporates non-English stakeholder comments (e.g., French) into AI summaries
+
+</td>
+<td align="center">
+
+### 📄
+**Premium PDF Exports**
+
+One-click, polished offline executive reports built with ReportLab matching the dashboard aesthetic
+
+</td>
+</tr>
+<tr>
+<td align="center">
+
+### 🗂️
+**Bulk ZIP Ingestion**
+
+Drop `.zip` archives with multiple weeks of data — processed entirely in-memory, no file-lock issues
+
+</td>
+<td align="center">
+
+### 🔔
+**RAG Flip Email Alerts**
+
+Automatic email notifications when a project's status worsens (Green → Amber, Amber → Red, etc.)
+
+</td>
+<td align="center">
+
+### 📊
+**Monthly PPTX Synthesis**
+
+Auto-generates a 6-slide executive PowerPoint deck from all project snapshots in the database
+
+</td>
+</tr>
+</table>
+
+</div>
 
 ---
 
-<a name="deliverables"></a>
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                      SYSTEM ARCHITECTURE                          -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+## 🏗️ System Architecture
+
+<div align="center">
+
+<img src="docs/system_architecture.png" alt="System Architecture" width="90%"/>
+
+</div>
+
+<br/>
+
+<div align="center">
+
+| Layer | Technology | Role |
+|:---:|:---:|---|
+| 🖥️ **Frontend** | React + Vite + TanStack Router | Dashboard UI, Gantt, Trends, Uploads |
+| ⚙️ **Backend** | FastAPI + Python | REST API, RAG Engine, LLM, PDF Generator |
+| 🗄️ **Database** | SQLite | Projects, Snapshots, Tasks, Comments, Signals |
+| 🤖 **AI Layer** | Groq / OpenAI LLM | Narrative generation, sentiment, risk themes |
+| 📄 **Reporting** | ReportLab + python-pptx | PDF exports + PowerPoint decks |
+
+</div>
+
+---
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                        DATA PIPELINE                              -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+## 🔄 Data Pipeline
+
+<div align="center">
+
+<img src="docs/data_pipeline.png" alt="Data Pipeline" width="90%"/>
+
+</div>
+
+<br/>
+
+<div align="center">
+
+```
+📁 Upload .xlsx / .zip
+        ↓
+🔍 Parse & Normalize Sheets  →  🏗️ Reconstruct WBS Hierarchy
+        ↓
+💬 Extract Inline Comments  →  🌐 Detect & Translate (if non-English)
+        ↓
+📊 Sentiment Analysis  →  ⚖️ Deterministic RAG Scoring
+        ↓
+🤖 LLM Narrative Synthesis  →  💾 Persist Snapshot (SQLite)
+        ↓                              ↓
+📈 Dashboard: RAG + Gantt + Trends    📄 One-Click PDF Export
+```
+
+</div>
+
+---
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                         TECH STACK                                -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+## 🛠️ Full Tech Stack
+
+<div align="center">
+
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><b>🐍 Backend Language</b></td>
+<td><img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white"/></td>
+<td>Core agent logic, ingestion, RAG engine</td>
+</tr>
+<tr>
+<td><b>⚡ API Framework</b></td>
+<td><img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white"/></td>
+<td>REST API serving the React frontend</td>
+</tr>
+<tr>
+<td><b>⚛️ Frontend</b></td>
+<td><img src="https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB"/> <img src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white"/></td>
+<td>Dashboard, charts, file uploads</td>
+</tr>
+<tr>
+<td><b>🗄️ Database</b></td>
+<td><img src="https://img.shields.io/badge/SQLite-07405E?style=flat-square&logo=sqlite&logoColor=white"/></td>
+<td>Portable, auditable snapshot store</td>
+</tr>
+<tr>
+<td><b>📊 Visualization</b></td>
+<td><img src="https://img.shields.io/badge/Recharts-22B5BF?style=flat-square"/></td>
+<td>RAG trend lines, Gantt bars, Pie charts</td>
+</tr>
+<tr>
+<td><b>🤖 AI / LLM</b></td>
+<td><img src="https://img.shields.io/badge/Groq-FF6B35?style=flat-square"/> / <img src="https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white"/></td>
+<td>Narrative synthesis, sentiment, risk themes</td>
+</tr>
+<tr>
+<td><b>📄 PDF Engine</b></td>
+<td><img src="https://img.shields.io/badge/ReportLab-CC3333?style=flat-square"/></td>
+<td>Premium styled executive PDF reports</td>
+</tr>
+<tr>
+<td><b>📊 Presentation</b></td>
+<td><img src="https://img.shields.io/badge/python--pptx-B7472A?style=flat-square"/></td>
+<td>Monthly executive PowerPoint deck generation</td>
+</tr>
+<tr>
+<td><b>📦 Excel Ingestion</b></td>
+<td><img src="https://img.shields.io/badge/openpyxl-217346?style=flat-square"/></td>
+<td>Multi-sheet messy Excel parser</td>
+</tr>
+<tr>
+<td><b>🚀 Deployment</b></td>
+<td><img src="https://img.shields.io/badge/Render-46E3B7?style=flat-square&logo=render&logoColor=white"/> <img src="https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white"/></td>
+<td>Backend on Render, Frontend on Vercel</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+---
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                      DEMO & LIVE LINKS                            -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+## 🎬 Demo & Live Links
+
+<div align="center">
+
+| 🌐 Service | 🔗 Live URL | Status |
+|:---:|---|:---:|
+| **Frontend Dashboard** | [project-pulse-ai-project-health-rep.vercel.app](https://project-pulse-ai-project-health-rep.vercel.app/) | ![Vercel](https://img.shields.io/badge/Live-22C55E?style=flat-square) |
+| **Backend API** | [projectpulse-ai-project-health-reporting.onrender.com](https://projectpulse-ai-project-health-reporting.onrender.com) | ![Render](https://img.shields.io/badge/Live-22C55E?style=flat-square) |
+| **API Docs (Swagger)** | [.../docs](https://projectpulse-ai-project-health-reporting.onrender.com/docs) | ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=flat-square&logo=swagger&logoColor=black) |
+
+</div>
+
+> 🎥 **Demo Video** — `Zycus-ProjectPulse AI-by Vibha Kashyap.mp4` is available locally (~172 MB, not committed to Git due to size). Share separately or host via Git LFS / YouTube.
+
+---
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                       DELIVERABLES MAP                            -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
 ## 📦 Deliverables Map
 
-| # | Deliverable | Location |
-|---|---|---|
-| 1 | Features & Tech Stack | [`Features and techstack.md`](./Features%20and%20techstack.md) |
-| 2 | One-Page RAG Methodology | [`docs/rag_methodology.md`](./docs/rag_methodology.md) — also browsable in-app under the **Methodology** tab |
-| 3 | Working AI Agent (Code + Instructions) | See [Getting Started](#getting-started) below |
-| 4 | Sample Test Data Generator | Run `python generate_test_data.py` → produces a `Test_Suite.zip` exercising Gantt, Trends, Multi-language, and more |
-| 5 | Final Monthly Presentation (6 slides, 16:9) | [`outputs/monthly/monthly_project_health.pptx`](./outputs/monthly/monthly_project_health.pptx) |
+<div align="center">
 
-> ℹ️ **Note:** the original file paths pointed to a local `C:\Users\...` machine location, which only resolves on that one computer. The links above use repo-relative paths instead, so they'll work correctly once pushed to GitHub — just make sure each file lives at that path relative to the repo root.
+| # | 📋 Deliverable | 📁 Location |
+|:---:|---|---|
+| 1 | 🏷️ Features & Tech Stack | [`Features and techstack.md`](./Features%20and%20techstack.md) |
+| 2 | 📖 One-Page RAG Methodology | [`backend/docs/rag_methodology.md`](./backend/docs/rag_methodology.md) — also browsable in-app |
+| 3 | 🤖 Working AI Agent | See [Local Setup](#%EF%B8%8F-local-setup) below |
+| 4 | 🧪 Test Data Generator | Run `python generate_test_data.py` → produces `Test_Suite.zip` |
+| 5 | 📊 Monthly Presentation (6 slides, 16:9) | [`backend/outputs/monthly/monthly_project_health.pptx`](./backend/outputs/monthly/monthly_project_health.pptx) |
+
+</div>
 
 ---
 
-<a name="getting-started"></a>
-## ⚙️ Getting Started
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                         LOCAL SETUP                               -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+## ⚙️ Local Setup
 
 ### Prerequisites
 
-<img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white"/> <img src="https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=nodedotjs&logoColor=white"/>
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)&nbsp;
+![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=nodedotjs&logoColor=white)&nbsp;
+![Git](https://img.shields.io/badge/Git-required-F05032?style=flat-square&logo=git&logoColor=white)
 
-### 1. Backend Setup
+### 🐍 Backend Setup
 
 ```bash
 cd backend
 python -m venv .venv
-.venv\Scripts\activate
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate    # macOS / Linux
 pip install -r requirements.txt
 pip install -e .
 ```
 
-### 2. Frontend Setup
+### ⚛️ Frontend Setup
 
 ```bash
 cd frontend
 npm install
 ```
 
+### 🔐 Environment Variables
+
+Create a `.env` file in the `backend/` directory:
+
+```env
+# LLM Provider (choose one)
+GROQ_API_KEY=your_groq_api_key_here
+# OPENAI_API_KEY=your_openai_api_key_here
+
+# Optional: Email Alerts
+ALERT_SMTP_HOST=smtp.gmail.com
+ALERT_SMTP_PORT=587
+ALERT_SMTP_USER=your_email@gmail.com
+ALERT_SMTP_PASS=your_app_password
+ALERT_EMAIL_TO=recipient@example.com
+```
+
+### ▶️ Running Locally
+
+| Terminal | Command | URL |
+|:---:|---|:---:|
+| **1 — Backend** | `cd backend && .venv\Scripts\python run_api.py` | [localhost:8001](http://localhost:8001) |
+| **2 — Frontend** | `cd frontend && npm run dev` | [localhost:3000](http://localhost:3000) |
+
+> Open **[http://localhost:3000](http://localhost:3000)** to view the dashboard 🎉
+
 ---
 
-<a name="running"></a>
-## ▶️ Running the Application
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                          DEPLOYMENT                               -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 
-| Terminal | Command | Runs on |
-|---|---|---|
-| **1 — Backend (FastAPI)** | `cd backend && .venv\Scripts\python run_api.py` | `http://localhost:8001` |
-| **2 — Frontend (Dev Server)** | `cd frontend && npm run dev` | `http://localhost:3000` |
-
-Then open **[http://localhost:3000](http://localhost:3000)** in your browser. 🎉
-
----
-
-<a name="deployment"></a>
 ## 🚀 Deployment
 
-| Layer | Platform | Live URL |
-|---|---|---|
-| **Backend — FastAPI** | [![Render](https://img.shields.io/badge/Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://projectpulse-ai-project-health-reporting.onrender.com) | [projectpulse-ai-project-health-reporting.onrender.com](https://projectpulse-ai-project-health-reporting.onrender.com) |
-| **Frontend — React** | [![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)](https://project-pulse-ai-project-health-rep.vercel.app/) | [project-pulse-ai-project-health-rep.vercel.app](https://project-pulse-ai-project-health-rep.vercel.app/) |
+<div align="center">
 
-The frontend's `VITE_API_BASE_URL` environment variable is set to the live Render backend URL so the two services communicate in production.
+| Layer | Platform | Live URL |
+|:---:|:---:|---|
+| ⚙️ **Backend — FastAPI** | [![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://projectpulse-ai-project-health-reporting.onrender.com) | 🔗 [projectpulse-ai-project-health-reporting.onrender.com](https://projectpulse-ai-project-health-reporting.onrender.com) |
+| 🌐 **Frontend — React** | [![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://project-pulse-ai-project-health-rep.vercel.app/) | 🔗 [project-pulse-ai-project-health-rep.vercel.app](https://project-pulse-ai-project-health-rep.vercel.app/) |
+
+</div>
+
+<details>
+<summary><b>📋 Render (Backend) Configuration</b></summary>
+<br/>
+
+| Field | Value |
+|---|---|
+| **Root Directory** | `backend` |
+| **Build Command** | `pip install -r requirements.txt && pip install -e .` |
+| **Start Command** | `uvicorn src.project_health.api:app --host 0.0.0.0 --port $PORT` |
+| **Health Check Path** | `/api/health` |
+| **Disk Mount Path** | `storage` _(for SQLite persistence)_ |
+| **Env Var** | `GROQ_API_KEY` or `OPENAI_API_KEY` |
+
+</details>
+
+<details>
+<summary><b>📋 Vercel (Frontend) Configuration</b></summary>
+<br/>
+
+| Field | Value |
+|---|---|
+| **Root Directory** | `frontend` |
+| **Framework Preset** | `Vite` |
+| **Build Command** | `npm run build` _(auto-detected)_ |
+| **Output Directory** | `dist` _(auto-detected)_ |
+| **Env Var** | `VITE_API_BASE_URL` = `https://projectpulse-ai-project-health-reporting.onrender.com/api` |
+
+</details>
 
 ---
 
-<a name="design-decisions"></a>
-## 🧩 Design Decisions & Architecture Rationale
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                      DESIGN DECISIONS                             -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+## 🧩 Design Decisions
 
 <details>
-<summary><b>1. Deterministic RAG First, LLM Second</b></summary>
-<br>
+<summary><b>⚖️ 1. Deterministic RAG First, LLM Second</b></summary>
+<br/>
 
-The final Red, Amber, or Green status is calculated by a deterministic weighted rule engine in `src/project_health/rag_engine.py`, rather than asking an LLM to infer project health directly from spreadsheets.
+The final **Red, Amber, or Green** status is calculated by a deterministic weighted rule engine in `backend/src/project_health/rag_engine.py`, _not_ by asking an LLM to infer project health directly from spreadsheets.
 
-This is intentional: executive status reporting needs traceability. The scoring model uses inspectable signals — schedule health, progress gap, milestone health, blockers, stakeholder sentiment, and budget availability. The LLM layer is used only *after* these signals are computed, turning the evidence into executive summaries, risk themes, and next-step recommendations.
+This is intentional: executive status reporting needs **traceability**. The scoring model uses inspectable signals — schedule health, progress gap, milestone health, blockers, stakeholder sentiment, and budget availability. The LLM layer is used only **after** these signals are computed, turning the evidence into executive summaries, risk themes, and next-step recommendations.
+
 </details>
 
 <details>
-<summary><b>2. Evidence-Based Reporting</b></summary>
-<br>
+<summary><b>🔍 2. Evidence-Based, Auditable Reporting</b></summary>
+<br/>
 
-The system preserves source row numbers, parsed task details, inline task comments, warnings, and signal-level reasoning — making each RAG decision auditable instead of a black-box summary.
+The system preserves source row numbers, parsed task details, inline task comments, warnings, and signal-level reasoning — making each RAG decision **auditable** instead of a black-box summary.
 
 SQLite is the persistence layer because it's lightweight, portable, and easy for reviewers to inspect. It stores project snapshots, tasks, comments, RAG signals, and data quality issues, so weekly reports and monthly synthesis can be regenerated from the same evidence base.
+
 </details>
 
 <details>
-<summary><b>3. Resilient Excel Ingestion & Grouping</b></summary>
-<br>
+<summary><b>📁 3. Resilient Excel Ingestion & Smart Grouping</b></summary>
+<br/>
 
-The Excel parser is built for messy project-plan exports: it detects useful sheets and columns from workbook content, normalizes inconsistent field names, handles missing or malformed values, reconstructs WBS hierarchy from level/ancestor fields, and explicitly extracts inline comments from task rows.
+The Excel parser is built for **messy real-world project-plan exports**: it detects useful sheets and columns from workbook content, normalizes inconsistent field names, handles missing or malformed values, reconstructs WBS hierarchy from level/ancestor fields, and explicitly extracts inline comments from task rows.
 
-The database schema (`UNIQUE(name)`) intentionally groups uploads by their internal **Project Name** rather than filename, letting the system merge `Week1.xlsx`, `Week2.xlsx`, and `Week3.xlsx` into one unified chronological timeline for trend tracking.
+The database schema (`UNIQUE(name)`) intentionally groups uploads by their internal **Project Name** rather than filename — letting the system merge `Week1.xlsx`, `Week2.xlsx`, and `Week3.xlsx` into one unified chronological timeline for **trend tracking**.
+
 </details>
 
 <details>
-<summary><b>4. Frontend and Backend Separation</b></summary>
-<br>
+<summary><b>🔀 4. Frontend & Backend Separation</b></summary>
+<br/>
 
 The backend owns ingestion, scoring, persistence, report generation, and synthesis via FastAPI. The React frontend focuses on uploading project plans, browsing portfolio health, rendering interactive Gantt and Trend charts, and navigating generated insights.
 
-This split keeps the analytical logic reusable across CLI, API, scheduler, or dashboard workflows.
+This split keeps the analytical logic reusable across **CLI, API, scheduler, or dashboard** workflows.
+
 </details>
 
 ---
 
-<a name="license"></a>
-## 📄 License
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                      LICENSE & AUTHOR                             -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 
-This project is licensed under the **[MIT License](./LICENSE)**.
+## 📄 License & Author
+
+<div align="center">
+
+<table>
+<tr>
+<td align="center" width="50%">
+
+### 📄 License
+
+This project is licensed under the **[MIT License](./LICENSE)**
 
 ```
 MIT License — Copyright (c) 2026 Vibha Kashyap
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software.
+Free to use, modify, distribute, and sell
+with attribution to the original author.
 ```
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge)](./LICENSE)
+
+</td>
+<td align="center" width="50%">
+
+### 👩‍💻 Author
+
+**Vibha Kashyap**
+
+B.Tech AIML Student
+
+[![GitHub](https://img.shields.io/badge/GitHub-Vibhakash-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Vibhakash)
+
+_Built with ❤️ and a lot of ☕_
+
+</td>
+</tr>
+</table>
+
+</div>
+
 ---
 
-<a name="author"></a>
-## 👩‍💻 Author
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                          FOOTER                                   -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 
-**Vibha Kashyap** — B.Tech AIML Student
-<!-- Add your GitHub / LinkedIn / portfolio links here, e.g.:
-[![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)](your-link)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](your-link)
--->
+<div align="center">
 
----
+### ⭐ If this project helped you, consider giving it a star!
 
-<p align="center"><i>✨ Because project status shouldn't be a guessing game — deterministic where it matters, intelligent where it helps. ✨</i></p>
+[![Star this repo](https://img.shields.io/github/stars/Vibhakash/ProjectPulse-AI-Project-health-reporting-agent-with-RAG-status-system?style=for-the-badge&logo=github&color=F59E0B)](https://github.com/Vibhakash/ProjectPulse-AI-Project-health-reporting-agent-with-RAG-status-system)
 
-<hr/>
+<br/>
+
+_✨ Because project status shouldn't be a guessing game — deterministic where it matters, intelligent where it helps. ✨_
+
+</div>
+
+![footer](https://capsule-render.vercel.app/api?type=waving&color=0:4f46e5,50:7c3aed,100:a855f7&height=120&section=footer&animation=fadeIn)
